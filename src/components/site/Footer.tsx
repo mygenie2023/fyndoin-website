@@ -1,57 +1,87 @@
 import { Link } from "@tanstack/react-router";
 import { Logo } from "./Logo";
-import { BRAND } from "@/lib/fyndo";
+import { CONTACT } from "@/lib/fyndo";
+import { useT } from "@/i18n/provider";
 
-const COLUMNS: Array<{ title: string; links: Array<{ to: string; label: string }> }> = [
+const COLUMNS: Array<{ titleKey: string; links: Array<{ to: string; key: string }> }> = [
   {
-    title: "Product",
+    titleKey: "product",
     links: [
-      { to: "/app", label: "Open App" },
-      { to: "/how-it-works", label: "How It Works" },
-      { to: "/services", label: "Services" },
+      { to: "/app", key: "openApp" },
+      { to: "/how-it-works", key: "howItWorks" },
+      { to: "/services", key: "services" },
     ],
   },
   {
-    title: "For you",
+    titleKey: "forYou",
     links: [
-      { to: "/for-work-providers", label: "For Work Providers" },
-      { to: "/for-operators", label: "For Operators" },
-      { to: "/trust", label: "Trust & Safety" },
+      { to: "/for-work-providers", key: "forWorkProviders" },
+      { to: "/for-operators", key: "forOperators" },
+      { to: "/trust", key: "trust" },
     ],
   },
   {
-    title: "Company",
+    titleKey: "company",
     links: [
-      { to: "/about", label: "About" },
-      { to: "/faq", label: "FAQ" },
-      { to: "/contact", label: "Contact" },
+      { to: "/about", key: "about" },
+      { to: "/faq", key: "faq" },
+      { to: "/contact", key: "contact" },
     ],
   },
   {
-    title: "Legal",
+    titleKey: "legal",
     links: [
-      { to: "/privacy", label: "Privacy Policy" },
-      { to: "/terms", label: "Terms of Service" },
+      { to: "/privacy", key: "privacy" },
+      { to: "/terms", key: "terms" },
     ],
   },
 ];
 
 export function Footer() {
+  const t = useT();
   return (
     <footer className="mt-24 border-t border-border bg-secondary/40">
       <div className="container-page grid gap-10 py-14 md:grid-cols-[1.4fr_repeat(4,1fr)]">
         <div className="max-w-xs">
           <Logo />
           <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-            FYNDO is a hyperlocal marketplace connecting people who need work done with skilled
-            workers, service providers and equipment owners nearby.
+            {t("common.footer.blurb")}
           </p>
-          <p className="mt-4 font-display text-base font-bold">{BRAND.line}</p>
+          <p className="mt-4 font-display text-base font-bold">{t("common.brand.line")}</p>
+
+          <dl className="mt-5 space-y-2 text-sm">
+            <div className="flex flex-wrap items-center gap-x-2">
+              <dt className="font-semibold">{t("common.contact.email")}:</dt>
+              <dd className="min-w-0">
+                <a
+                  href={CONTACT.emailHref}
+                  aria-label={t("common.contact.emailAria")}
+                  className="break-all text-primary underline-offset-4 hover:underline"
+                >
+                  {CONTACT.email}
+                </a>
+              </dd>
+            </div>
+            <div className="flex flex-wrap items-center gap-x-2">
+              <dt className="font-semibold">{t("common.contact.phone")}:</dt>
+              <dd>
+                <a
+                  href={CONTACT.phoneHref}
+                  aria-label={t("common.contact.callAria")}
+                  className="text-primary underline-offset-4 hover:underline"
+                >
+                  {CONTACT.phone}
+                </a>
+              </dd>
+            </div>
+          </dl>
         </div>
 
         {COLUMNS.map((col) => (
-          <nav key={col.title} aria-label={col.title}>
-            <h2 className="font-display text-sm font-bold tracking-wide uppercase">{col.title}</h2>
+          <nav key={col.titleKey} aria-label={t(`common.footer.${col.titleKey}`)}>
+            <h2 className="font-display text-sm font-bold tracking-wide uppercase">
+              {t(`common.footer.${col.titleKey}`)}
+            </h2>
             <ul className="mt-4 space-y-2.5">
               {col.links.map((l) => (
                 <li key={l.to}>
@@ -59,7 +89,7 @@ export function Footer() {
                     to={l.to}
                     className="text-sm text-muted-foreground transition-colors hover:text-foreground"
                   >
-                    {l.label}
+                    {t(`common.footer.links.${l.key}`)}
                   </Link>
                 </li>
               ))}
@@ -70,8 +100,10 @@ export function Footer() {
 
       <div className="border-t border-border">
         <div className="container-page flex flex-col gap-2 py-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} FYNDO. All rights reserved.</p>
-          <p>{BRAND.tagline}</p>
+          <p>
+            © {new Date().getFullYear()} FYNDO. {t("common.footer.rights")}
+          </p>
+          <p>{t("common.brand.tagline")}</p>
         </div>
       </div>
     </footer>
