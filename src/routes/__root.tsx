@@ -12,7 +12,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { LanguageProvider } from "@/i18n/provider";
-import { getCurrentLang, LANG_TAGS } from "@/i18n/lang";
+import { getCurrentLang, setCurrentLang, LANG_TAGS } from "@/i18n/lang";
 import { t as tHead, langMeta } from "@/i18n/head";
 
 function NotFoundComponent() {
@@ -76,6 +76,14 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  // SSR renders in the visitor's persisted language so markup, metadata and
+  // hydration all agree on the same dictionary.
+  beforeLoad: async () => {
+    if (typeof window === "undefined") {
+      const { readRequestLang } = await import("@/i18n/request-lang.server");
+      setCurrentLang(readRequestLang());
+    }
+  },
   head: () => ({
     meta: [
       { charSet: "utf-8" },

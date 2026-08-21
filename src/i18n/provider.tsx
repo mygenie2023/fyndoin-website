@@ -9,7 +9,6 @@ import {
 } from "react";
 import { useRouter } from "@tanstack/react-router";
 import {
-  DEFAULT_LANG,
   LANG_TAGS,
   getCurrentLang,
   persistLang,
@@ -52,17 +51,19 @@ const I18nContext = createContext<I18nValue | null>(null);
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
-  // SSR and first paint always render the default language (Kannada); a stored
-  // preference is applied right after hydration.
-  const [lang, setLangState] = useState<Lang>(DEFAULT_LANG);
+  // SSR resolves the language from the request cookie and the client module
+  // reads the same cookie synchronously, so first paint matches the server.
+  const [lang, setLangState] = useState<Lang>(() => getCurrentLang());
 
   useEffect(() => {
     const stored = readInitialLang();
     document.documentElement.lang = LANG_TAGS[stored];
-    if (stored !== getCurrentLang() || stored !== DEFAULT_LANG) {
+    if (stored !== getCurrentLang()) {
       persistLang(stored);
       setLangState(stored);
       router.invalidate();
+    } else {
+      persistLang(stored);
     }
   }, [router]);
 
