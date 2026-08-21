@@ -1,30 +1,17 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { createServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import { z } from "zod";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { Breadcrumbs, breadcrumbSchema } from "@/components/site/Breadcrumbs";
 import { Section } from "@/components/site/Section";
 import { Button } from "@/components/ui/cta";
 import { BRAND } from "@/lib/fyndo";
+import { contactSchema } from "@/lib/contact-schema";
+import { submitContact } from "@/lib/contact.functions";
 
 const TITLE = "Contact FYNDO — Get in Touch";
 const DESC =
   "Contact the FYNDO team with a question, a partnership idea, or a report about a listing or profile on the platform.";
 
-const contactSchema = z.object({
-  name: z.string().trim().min(2).max(80),
-  email: z.string().trim().email().max(160),
-  message: z.string().trim().min(10).max(2000),
-});
-
-export const submitContact = createServerFn({ method: "POST" })
-  .inputValidator((data: unknown) => contactSchema.parse(data))
-  .handler(async ({ data }) => {
-    // Validated server-side. Wire this to email/CRM delivery when available.
-    console.log("[contact] message received from", data.email.replace(/(.).*(@.*)/, "$1***$2"));
-    return { ok: true as const };
-  });
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
