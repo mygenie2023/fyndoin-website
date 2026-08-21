@@ -8,7 +8,7 @@ const home = {
     name: "FYNDO",
   },
   hero: {
-    badge: "Hyperlocal skilled workers & local services",
+    badge: "Now across all taluks of Dakshina Kannada",
     title: "Find the right person for the work. Right around you.",
     subtitle:
       "FYNDO connects people who need work done with skilled workers, service providers and equipment owners nearby — directly, with no middlemen in between.",

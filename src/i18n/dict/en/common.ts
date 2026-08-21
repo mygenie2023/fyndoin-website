@@ -8,6 +8,11 @@ const common = {
     description:
       "FYNDO connects people who need work done with skilled workers, service providers and equipment owners nearby.",
   },
+  coverage: {
+    label: "Service area",
+    short: "Now across all taluks of Dakshina Kannada",
+    statement: "FYNDO services are now available across all taluks of Dakshina Kannada.",
+  },
   nav: {
     aria: "Main",
     mobileAria: "Mobile",
