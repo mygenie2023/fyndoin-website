@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { APP_URL, APP_IS_EXTERNAL, track } from "@/lib/fyndo";
+import { useT } from "@/i18n/provider";
 
 type Variant = "primary" | "accent" | "outline" | "ghost" | "onInk";
 type Size = "sm" | "md" | "lg";
@@ -66,7 +67,7 @@ export function Button({
 
 /** The site's most important conversion: opening the FYNDO application. */
 export function OpenAppButton({
-  label = "Open FYNDO App",
+  label,
   source,
   variant = "primary",
   size = "md",
@@ -78,6 +79,8 @@ export function OpenAppButton({
   size?: Size;
   className?: string;
 }) {
+  const t = useT();
+  const text = label ?? t("common.cta.openApp");
   const onClick = () => {
     track("open_app_clicked", { source });
     track("website_to_app_conversion", { source });
@@ -86,13 +89,13 @@ export function OpenAppButton({
   if (APP_IS_EXTERNAL) {
     return (
       <a href={APP_URL} onClick={onClick} className={buttonClass(variant, size, className)}>
-        {label}
+        {text}
       </a>
     );
   }
   return (
     <Link to="/app" onClick={onClick} className={buttonClass(variant, size, className)}>
-      {label}
+      {text}
     </Link>
   );
 }
