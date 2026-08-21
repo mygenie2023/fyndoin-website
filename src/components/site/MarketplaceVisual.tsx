@@ -1,4 +1,10 @@
-import workersImage from "@/assets/fyndo-workers.jpg";
+import workersFallback from "@/assets/img/workers-1280.jpg";
+import workersAvif640 from "@/assets/img/workers-640.avif";
+import workersAvif960 from "@/assets/img/workers-960.avif";
+import workersAvif1280 from "@/assets/img/workers-1280.avif";
+import workersWebp640 from "@/assets/img/workers-640.webp";
+import workersWebp960 from "@/assets/img/workers-960.webp";
+import workersWebp1280 from "@/assets/img/workers-1280.webp";
 import { useI18n } from "@/i18n/provider";
 
 const POSITIONS = [
@@ -29,15 +35,28 @@ export function MarketplaceVisual() {
     <div className="relative">
       <div className="surface-card relative overflow-hidden p-2 sm:p-3">
         <div className="relative overflow-hidden rounded-[1.1rem]">
-          <img
-            src={workersImage}
-            alt={t("home.hero.visualAlt")}
-            width={1280}
-            height={960}
-            fetchPriority="high"
-            decoding="async"
-            className="h-[22rem] w-full object-cover sm:h-[26rem] lg:h-[30rem]"
-          />
+          <picture>
+            <source
+              type="image/avif"
+              srcSet={`${workersAvif640} 640w, ${workersAvif960} 960w, ${workersAvif1280} 1280w`}
+              sizes="(max-width: 1024px) 92vw, 45vw"
+            />
+            <source
+              type="image/webp"
+              srcSet={`${workersWebp640} 640w, ${workersWebp960} 960w, ${workersWebp1280} 1280w`}
+              sizes="(max-width: 1024px) 92vw, 45vw"
+            />
+            <img
+              src={workersFallback}
+              alt={t("home.hero.visualAlt")}
+              width={1280}
+              height={960}
+              fetchPriority="high"
+              decoding="async"
+              loading="eager"
+              className="h-[22rem] w-full object-cover sm:h-[26rem] lg:h-[30rem]"
+            />
+          </picture>
           <div
             aria-hidden="true"
             className="absolute inset-0 bg-[linear-gradient(180deg,transparent_35%,color-mix(in_oklab,var(--primary-deep)_78%,transparent))]"
