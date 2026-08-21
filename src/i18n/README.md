@@ -44,3 +44,21 @@ active dictionary and emits og/twitter/language tags. Language changes call
 - Hindi: simple conversational Hindi, not formal Sanskritised Hindi.
 - English: keep existing polished copy.
 - Keep the same object shape/keys across all three languages.
+
+## Translated service taxonomy (shared contract)
+
+`src/i18n/taxonomy.ts` (owned by the services work) exports:
+
+```ts
+export interface UiTrade { label: string; serviceSlug?: string }
+export interface UiCategory { slug: string; name: string; blurb: string; emoji: string; trades: UiTrade[] }
+export interface UiService { slug: string; name: string; category: string; summary: string; covers: string[]; whenYouNeed: string[] }
+
+export function useCategories(): UiCategory[];
+export function useServices(): UiService[];
+export function useService(slug: string): UiService | undefined;
+```
+
+Raw English data stays in `src/lib/services.ts` (slugs are the stable keys);
+translations live in the `services` dictionary namespace.
+Any component needing category/service copy uses these hooks.

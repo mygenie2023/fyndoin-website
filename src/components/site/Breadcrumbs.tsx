@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { useT } from "@/i18n/provider";
 
 export interface Crumb {
   label: string;
@@ -6,8 +7,9 @@ export interface Crumb {
 }
 
 export function Breadcrumbs({ items }: { items: Crumb[] }) {
+  const t = useT();
   return (
-    <nav aria-label="Breadcrumb" className="text-sm text-muted-foreground">
+    <nav aria-label={t("common.a11y.breadcrumb")} className="text-sm text-muted-foreground">
       <ol className="flex flex-wrap items-center gap-1.5">
         {items.map((item, i) => (
           <li key={item.label} className="flex items-center gap-1.5">
