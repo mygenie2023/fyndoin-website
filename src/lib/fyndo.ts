@@ -15,12 +15,19 @@ export function appLink(path = ""): string {
   return `${APP_URL}${path.startsWith("/") ? path : `/${path}`}`;
 }
 
+/** Official FYNDO contact details. Do not invent additional channels. */
+export const CONTACT = {
+  email: "auroviafyndo@gmail.com",
+  emailHref: "mailto:auroviafyndo@gmail.com",
+  phone: "+91 9663474365",
+  phoneHref: "tel:+919663474365",
+} as const;
+
 export const BRAND = {
   name: "FYNDO",
   tagline: "Hyperlocal Skilled Workers & Local Services Marketplace",
   line: "Your Work. Our Network.",
-  contactEmail:
-    (import.meta.env['VITE_FYNDO_CONTACT_EMAIL'] as string | undefined) || "hello@fyndo.app",
+  contactEmail: CONTACT.email,
 } as const;
 
 /* ---------------------------------------------------------------- analytics */
