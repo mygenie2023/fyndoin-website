@@ -4,7 +4,7 @@ import { Breadcrumbs, breadcrumbSchema } from "@/components/site/Breadcrumbs";
 import { Reveal, Section, SectionHeading } from "@/components/site/Section";
 import { AppCTA, HowItWorksSection, TrustSection } from "@/components/site/Sections";
 import { pageMeta, t as tHead, tx as txHead } from "@/i18n/head";
-import { useT } from "@/i18n/provider";
+import { useI18n } from "@/i18n/provider";
 
 export const Route = createFileRoute("/how-it-works")({
   head: () => ({
@@ -61,9 +61,9 @@ function Flow({ title, steps, tone }: { title: string; steps: string[]; tone: "p
 }
 
 function HowItWorksPage() {
-  const t = useT();
-  const providerSteps = t("pages.howItWorks.flow.workProvider.steps") as unknown as string[];
-  const operatorSteps = t("pages.howItWorks.flow.operator.steps") as unknown as string[];
+  const { t, tx } = useI18n();
+  const providerSteps = tx<string[]>("pages.howItWorks.flow.workProvider.steps");
+  const operatorSteps = tx<string[]>("pages.howItWorks.flow.operator.steps");
   return (
     <SiteLayout>
       <Section className="hero-wash pt-10 pb-4">
