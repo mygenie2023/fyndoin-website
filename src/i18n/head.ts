@@ -1,5 +1,5 @@
 import { LANG_OG_LOCALE, LANG_TAGS, getCurrentLang, type Lang } from "./lang";
-import { translate } from "./provider";
+import { translate, translateAny } from "./provider";
 
 /**
  * Helper for route `head()` blocks: builds the localized meta set for the
@@ -12,6 +12,11 @@ export function headLang(): Lang {
 
 export function t(path: string): string {
   return translate(getCurrentLang(), path);
+}
+
+/** Non-string dictionary access (arrays/objects) for head() blocks. */
+export function tx<T>(path: string): T {
+  return translateAny<T>(getCurrentLang(), path);
 }
 
 /** Language-related meta tags shared by every page. */

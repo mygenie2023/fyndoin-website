@@ -2,8 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { Breadcrumbs, breadcrumbSchema } from "@/components/site/Breadcrumbs";
 import { Reveal, Section, SectionHeading } from "@/components/site/Section";
-import { AppCTA, HowItWorksSection, STEPS, TrustSection } from "@/components/site/Sections";
-import { pageMeta, t as tHead } from "@/i18n/head";
+import { AppCTA, HowItWorksSection, TrustSection } from "@/components/site/Sections";
+import { pageMeta, t as tHead, tx as txHead } from "@/i18n/head";
 import { useT } from "@/i18n/provider";
 
 export const Route = createFileRoute("/how-it-works")({
@@ -22,7 +22,11 @@ export const Route = createFileRoute("/how-it-works")({
             "@context": "https://schema.org",
             "@type": "HowTo",
             name: tHead("pages.howItWorks.jsonLd.howToName"),
-            step: STEPS.map((s) => ({ "@type": "HowToStep", name: s.title, text: s.body })),
+            step: txHead<Array<{ title: string; body: string }>>("home.howItWorks.steps").map((s) => ({
+              "@type": "HowToStep",
+              name: s.title,
+              text: s.body,
+            })),
           },
         ]),
       },
