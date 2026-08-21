@@ -42,7 +42,11 @@ export function Section({
   id?: string;
 }) {
   return (
-    <section id={id} className={cn("py-16 sm:py-20 lg:py-24", className)}>
+    <section
+      id={id}
+      className={cn("py-16 sm:py-20 lg:py-24", className)}
+      style={{ contentVisibility: "auto", containIntrinsicSize: "auto 600px" }}
+    >
       <div className="container-page">{children}</div>
     </section>
   );
