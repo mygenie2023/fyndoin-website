@@ -1,8 +1,8 @@
 const home = {
   meta: {
-    title: "FYNDO — Find Skilled Workers & Local Services Near You",
+    title: "FYNDO — Local Skilled Workers & Services in Dakshina Kannada",
     description:
-      "FYNDO is a hyperlocal marketplace connecting people who need work done with skilled workers, service providers and equipment owners nearby. Post work, compare operators, connect directly.",
+      "FYNDO is a hyperlocal marketplace connecting people who need work done with skilled workers, service providers and equipment owners nearby. Post work, compare operators, connect directly. Available across all taluks of Dakshina Kannada.",
   },
   jsonLd: {
     name: "FYNDO",
