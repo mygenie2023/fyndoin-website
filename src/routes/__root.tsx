@@ -13,7 +13,14 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { LanguageProvider } from "@/i18n/provider";
 import { getCurrentLang, setCurrentLang, LANG_TAGS } from "@/i18n/lang";
+import { createIsomorphicFn } from "@tanstack/react-start";
+import { readRequestLang } from "@/i18n/request-lang.server";
 import { t as tHead, langMeta } from "@/i18n/head";
+
+/** On the server, adopt the language cookie; on the client the module already has it. */
+const syncRequestLang = createIsomorphicFn()
+  .client(() => undefined)
+  .server(() => setCurrentLang(readRequestLang()));
 
 function NotFoundComponent() {
   return (
@@ -78,11 +85,8 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   // SSR renders in the visitor's persisted language so markup, metadata and
   // hydration all agree on the same dictionary.
-  beforeLoad: async () => {
-    if (typeof window === "undefined") {
-      const { readRequestLang } = await import("@/i18n/request-lang.server");
-      setCurrentLang(readRequestLang());
-    }
+  beforeLoad: () => {
+    syncRequestLang();
   },
   head: () => ({
     meta: [
