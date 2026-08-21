@@ -48,13 +48,12 @@ export function MobileActionBar() {
             aria-label={t("common.contact.callAria")}
             className="flex min-h-14 w-full flex-col items-center justify-center gap-0.5 bg-accent px-1 text-[0.78rem] leading-tight font-bold text-accent-foreground transition-[filter] hover:brightness-105 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary focus-visible:outline-none"
           >
-            <svg viewBox="0 0 24 24" aria-hidden="true" className="size-4" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg viewBox="0 0 24 24" aria-hidden="true" className="size-6" fill="none" stroke="currentColor" strokeWidth="2">
               <path
                 d="M6.6 3h2.2l1.4 3.5-1.8 1.3a12 12 0 0 0 5.8 5.8l1.3-1.8L19 13.2v2.2A2.4 2.4 0 0 1 16.4 18 13.4 13.4 0 0 1 6 7.6 2.4 2.4 0 0 1 6.6 3Z"
                 strokeLinejoin="round"
               />
             </svg>
-            <span className="truncate">{t("common.contact.call")}</span>
           </a>
         </li>
       </ul>

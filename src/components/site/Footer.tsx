@@ -25,7 +25,6 @@ const COLUMNS: Array<{ titleKey: string; links: Array<{ to: string; key: string 
     links: [
       { to: "/about", key: "about" },
       { to: "/faq", key: "faq" },
-      { to: "/contact", key: "contact" },
     ],
   },
   {
