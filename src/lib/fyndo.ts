@@ -1,0 +1,56 @@
+/**
+ * Central FYNDO website configuration.
+ * The app URL is configurable so the marketing site can point at whichever
+ * deployment hosts the authenticated FYNDO application.
+ */
+
+export const APP_URL: string =
+  (import.meta.env['VITE_FYNDO_APP_URL'] as string | undefined)?.replace(/\/$/, "") || "/app";
+
+/** True when APP_URL points at an external deployment rather than this site. */
+export const APP_IS_EXTERNAL = /^https?:\/\//i.test(APP_URL);
+
+export function appLink(path = ""): string {
+  if (!path) return APP_URL;
+  return `${APP_URL}${path.startsWith("/") ? path : `/${path}`}`;
+}
+
+export const BRAND = {
+  name: "FYNDO",
+  tagline: "Hyperlocal Skilled Workers & Local Services Marketplace",
+  line: "Your Work. Our Network.",
+  contactEmail:
+    (import.meta.env['VITE_FYNDO_CONTACT_EMAIL'] as string | undefined) || "hello@fyndo.app",
+} as const;
+
+/* ---------------------------------------------------------------- analytics */
+
+export type FyndoEvent =
+  | "open_app_clicked"
+  | "install_prompt_shown"
+  | "install_prompt_accepted"
+  | "install_prompt_dismissed"
+  | "service_category_clicked"
+  | "how_it_works_viewed"
+  | "faq_opened"
+  | "website_to_app_conversion";
+
+type AnalyticsWindow = Window & {
+  dataLayer?: Array<Record<string, unknown>>;
+  gtag?: (...args: unknown[]) => void;
+};
+
+/**
+ * Fire a conversion event. No third-party script is bundled — events are
+ * pushed to a dataLayer/gtag if the host page has configured one.
+ */
+export function track(event: FyndoEvent, params: Record<string, unknown> = {}): void {
+  if (typeof window === "undefined") return;
+  const w = window as AnalyticsWindow;
+  try {
+    w.dataLayer?.push({ event, ...params });
+    w.gtag?.("event", event, params);
+  } catch {
+    /* analytics must never break the page */
+  }
+}
