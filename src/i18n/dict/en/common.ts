@@ -3,6 +3,11 @@ const common = {
     tagline: "Hyperlocal Skilled Workers & Local Services Marketplace",
     line: "Your Work. Our Network.",
   },
+  meta: {
+    title: "FYNDO — Hyperlocal Skilled Workers & Local Services",
+    description:
+      "FYNDO connects people who need work done with skilled workers, service providers and equipment owners nearby.",
+  },
   nav: {
     aria: "Main",
     mobileAria: "Mobile",
