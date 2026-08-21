@@ -106,6 +106,17 @@ export function Footer() {
             © {new Date().getFullYear()} FYNDO. {t("common.footer.rights")}
           </p>
           <p>{t("common.brand.tagline")}</p>
+          <p>
+            Built with ❤️ by{" "}
+            <a
+              href="https://1xsoft.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-foreground underline-offset-4 hover:underline"
+            >
+              1Xsoft
+            </a>
+          </p>
         </div>
       </div>
     </footer>
