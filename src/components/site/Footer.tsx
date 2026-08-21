@@ -47,6 +47,9 @@ export function Footer() {
             {t("common.footer.blurb")}
           </p>
           <p className="mt-4 font-display text-base font-bold">{t("common.brand.line")}</p>
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+            {t("common.coverage.statement")}
+          </p>
 
           <dl className="mt-5 space-y-2 text-sm">
             <div className="flex flex-wrap items-center gap-x-2">

@@ -114,6 +114,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "@type": "Organization",
           name: "FYNDO",
           slogan: "Your Work. Our Network.",
+          areaServed: {
+            "@type": "AdministrativeArea",
+            name: "Dakshina Kannada",
+            address: { "@type": "PostalAddress", addressRegion: "Karnataka", addressCountry: "IN" },
+          },
+          email: "auroviafyndo@gmail.com",
+          telephone: "+919663474365",
           description:
             "Hyperlocal skilled workers and local services marketplace connecting Work Providers with Operators nearby.",
         }),
