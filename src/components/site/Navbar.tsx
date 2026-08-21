@@ -12,14 +12,11 @@ const NAV = [
   { to: "/services", key: "services" },
   { to: "/for-work-providers", key: "forWorkProviders" },
   { to: "/for-operators", key: "findWork" },
-  { to: "/trust", key: "trust" },
+  { to: "/faq", key: "faq" },
 ] as const;
 
 /** Secondary items: only in the collapsed menu, keeping the header uncluttered. */
-const SECONDARY = [
-  { to: "/about", key: "about" },
-  { to: "/faq", key: "faq" },
-] as const;
+const SECONDARY = [{ to: "/about", key: "about" }] as const;
 
 function PhoneIcon({ className = "size-[1.15rem]" }: { className?: string }) {
   return (

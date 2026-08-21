@@ -22,7 +22,7 @@ const common = {
     findWork: "ಕೆಲಸ ಹುಡುಕುವವರಿಗೆ",
     trust: "ನಂಬಿಕೆ",
     about: "ನಮ್ಮ ಬಗ್ಗೆ",
-    faq: "ಪ್ರಶ್ನೆಗಳು",
+    faq: "FAQ",
     contact: "ಸಂಪರ್ಕಿಸಿ",
     openMenu: "ಮೆನು ತೆರೆಯಿರಿ",
     closeMenu: "ಮೆನು ಮುಚ್ಚಿ",
