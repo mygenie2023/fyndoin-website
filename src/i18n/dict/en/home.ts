@@ -107,6 +107,7 @@ const home = {
     eyebrow: "Categories",
     title: "Local trades, grouped so they're easy to find",
     description: "Browse by category, then narrow down to the exact trade you need.",
+    exploreAll: "Explore all services",
   },
   nearby: {
     eyebrow: "Near you",
