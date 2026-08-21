@@ -4,22 +4,32 @@ import { Breadcrumbs, breadcrumbSchema } from "@/components/site/Breadcrumbs";
 import { Reveal, Section, SectionHeading } from "@/components/site/Section";
 import { AppCTA, TrustSection } from "@/components/site/Sections";
 import { OpenAppButton } from "@/components/ui/cta";
-import { getService, SERVICES } from "@/lib/services";
+import { headLang, langMeta, t as tHead } from "@/i18n/head";
+import { useI18n } from "@/i18n/provider";
+import { getService, useService, useServices } from "@/i18n/taxonomy";
+import { getService as getRawService } from "@/lib/services";
+
+function fill(template: string, name: string) {
+  return template.replaceAll("{name}", name);
+}
 
 export const Route = createFileRoute("/services/$service")({
   loader: ({ params }) => {
-    const service = getService(params.service);
+    const service = getRawService(params.service);
     if (!service) throw notFound();
-    return { service };
+    return { slug: service.slug };
   },
   head: ({ params, loaderData }) => {
-    if (!loaderData) {
+    const service = loaderData ? getService(headLang(), loaderData.slug) : undefined;
+    if (!service) {
       return {
-        meta: [{ title: "Service not found — FYNDO" }, { name: "robots", content: "noindex" }],
+        meta: [
+          { title: tHead("services.service.notFound.metaTitle") },
+          { name: "robots", content: "noindex" },
+        ],
       };
     }
-    const { service } = loaderData;
-    const title = `${service.name} Near You — Find Local ${service.name}s on FYNDO`;
+    const title = fill(tHead("services.service.metaTitle"), service.name);
     return {
       meta: [
         { title },
@@ -29,6 +39,7 @@ export const Route = createFileRoute("/services/$service")({
         { property: "og:type", content: "website" },
         { property: "og:url", content: `/services/${params.service}` },
         { name: "twitter:card", content: "summary_large_image" },
+        ...langMeta(),
       ],
       links: [{ rel: "canonical", href: `/services/${params.service}` }],
       scripts: [
@@ -36,8 +47,8 @@ export const Route = createFileRoute("/services/$service")({
           type: "application/ld+json",
           children: JSON.stringify(
             breadcrumbSchema([
-              { name: "Home", path: "/" },
-              { name: "Services", path: "/services" },
+              { name: tHead("common.nav.home"), path: "/" },
+              { name: tHead("common.footer.links.services"), path: "/services" },
               { name: service.name, path: `/services/${params.service}` },
             ]),
           ),
@@ -50,15 +61,14 @@ export const Route = createFileRoute("/services/$service")({
 });
 
 function ServiceNotFound() {
+  const t = useI18n().t;
   return (
     <SiteLayout>
       <Section>
-        <h1 className="text-3xl font-extrabold">We don't have a page for that service yet</h1>
-        <p className="mt-3 text-muted-foreground">
-          Browse all categories to find the trade you're looking for.
-        </p>
+        <h1 className="text-3xl font-extrabold">{t("services.service.notFound.title")}</h1>
+        <p className="mt-3 text-muted-foreground">{t("services.service.notFound.body")}</p>
         <Link to="/services" className="mt-6 inline-block font-semibold text-primary">
-          Explore all services →
+          {t("services.service.notFound.cta")}
         </Link>
       </Section>
     </SiteLayout>
@@ -66,23 +76,29 @@ function ServiceNotFound() {
 }
 
 function ServicePage() {
-  const { service } = Route.useLoaderData();
-  const related = SERVICES.filter((s) => s.slug !== service.slug).slice(0, 3);
+  const { slug } = Route.useLoaderData();
+  const t = useI18n().t;
+  const service = useService(slug);
+  const related = useServices()
+    .filter((s) => s.slug !== slug)
+    .slice(0, 3);
+
+  if (!service) return <ServiceNotFound />;
 
   return (
     <SiteLayout>
       <Section className="hero-wash pt-10 pb-4">
         <Breadcrumbs
           items={[
-            { label: "Home", to: "/" },
-            { label: "Services", to: "/services" },
+            { label: t("common.nav.home"), to: "/" },
+            { label: t("common.footer.links.services"), to: "/services" },
             { label: service.name },
           ]}
         />
         <div className="mt-6 max-w-3xl">
           <p className="text-sm font-semibold text-primary">{service.category}</p>
           <h1 className="mt-2 text-4xl leading-[1.05] font-extrabold sm:text-5xl">
-            Find a {service.name.toLowerCase()} near you
+            {fill(t("services.service.hero.findNear"), service.name)}
           </h1>
           <p className="mt-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
             {service.summary}
@@ -97,7 +113,9 @@ function ServicePage() {
         <div className="grid gap-6 lg:grid-cols-2">
           <Reveal>
             <article className="surface-card h-full p-7">
-              <h2 className="text-2xl font-extrabold">What a {service.name.toLowerCase()} covers</h2>
+              <h2 className="text-2xl font-extrabold">
+                {fill(t("services.service.covers.title"), service.name)}
+              </h2>
               <ul className="mt-5 space-y-2.5">
                 {service.covers.map((c) => (
                   <li key={c} className="flex gap-2.5 text-sm">
@@ -112,7 +130,7 @@ function ServicePage() {
           </Reveal>
           <Reveal delay={110}>
             <article className="surface-card h-full p-7">
-              <h2 className="text-2xl font-extrabold">When people usually look</h2>
+              <h2 className="text-2xl font-extrabold">{t("services.service.when.title")}</h2>
               <ul className="mt-5 space-y-2.5">
                 {service.whenYouNeed.map((c) => (
                   <li key={c} className="flex gap-2.5 text-sm">
@@ -131,16 +149,16 @@ function ServicePage() {
       <Section className="bg-secondary/40 pt-4">
         <SectionHeading
           align="left"
-          eyebrow="On FYNDO"
-          title={`How to find a ${service.name.toLowerCase()} through FYNDO`}
-          description={`Post what needs doing with your location and budget. Nearby ${service.name.toLowerCase()}s can see the request and respond. You compare profiles, ratings, distance and price, then assign the one that fits — and rate them once the work is done.`}
+          eyebrow={t("services.service.onFyndo.eyebrow")}
+          title={fill(t("services.service.onFyndo.title"), service.name)}
+          description={fill(t("services.service.onFyndo.description"), service.name)}
         />
       </Section>
 
       <TrustSection />
 
       <Section className="pt-0">
-        <h2 className="text-2xl font-extrabold">Other services</h2>
+        <h2 className="text-2xl font-extrabold">{t("services.service.other.title")}</h2>
         <div className="mt-6 grid gap-3 sm:grid-cols-3">
           {related.map((r) => (
             <Link

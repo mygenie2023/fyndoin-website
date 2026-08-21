@@ -2,6 +2,8 @@
   "name": "FYNDO — Local Work & Services",
   "short_name": "FYNDO",
   "description": "Find skilled workers and local services near you, or find work nearby.",
+  "lang": "kn-IN",
+  "dir": "ltr",
   "start_url": "/app",
   "scope": "/",
   "display": "standalone",

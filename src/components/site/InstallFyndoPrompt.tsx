@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useInstallPrompt } from "@/hooks/use-pwa-install";
 import { Button } from "@/components/ui/cta";
 import { track } from "@/lib/fyndo";
+import { useI18n } from "@/i18n/provider";
 
 /**
  * Elegant, non-intrusive install nudge.
@@ -10,6 +11,7 @@ import { track } from "@/lib/fyndo";
  * - Falls back to manual instructions on iOS Safari.
  */
 export function InstallFyndoPrompt() {
+  const { t, tx } = useI18n();
   const { canPromote, mode, install, snooze } = useInstallPrompt();
   const [visible, setVisible] = useState(false);
   const [showIosSteps, setShowIosSteps] = useState(false);
@@ -61,7 +63,7 @@ export function InstallFyndoPrompt() {
     <div
       role="dialog"
       aria-labelledby="install-fyndo-title"
-      className="sheet-in fixed inset-x-0 bottom-0 z-[60] px-3 pb-3 lg:hidden"
+      className="sheet-in fixed inset-x-0 bottom-[calc(3.5rem+env(safe-area-inset-bottom))] z-[55] px-3 pb-3 lg:hidden"
     >
       <div className="surface-card mx-auto max-w-lg p-4 shadow-[var(--shadow-lift)]">
         <div className="flex items-start gap-3">
@@ -73,29 +75,26 @@ export function InstallFyndoPrompt() {
           </span>
           <div className="min-w-0">
             <h2 id="install-fyndo-title" className="font-display text-base font-bold">
-              Install FYNDO
+              {t("common.install.title")}
             </h2>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Keep FYNDO one tap away — faster access to local work and services, no domain to
-              remember.
-            </p>
+            <p className="mt-1 text-sm text-muted-foreground">{t("common.install.body")}</p>
           </div>
         </div>
 
         {showIosSteps ? (
           <ol className="mt-4 space-y-1.5 rounded-xl bg-secondary p-3 text-sm text-muted-foreground">
-            <li>1. Tap the Share button in Safari.</li>
-            <li>2. Choose “Add to Home Screen”.</li>
-            <li>3. Tap “Add” — FYNDO appears on your home screen.</li>
+            {tx<readonly string[]>("common.install.iosSteps").map((step) => (
+              <li key={step}>{step}</li>
+            ))}
           </ol>
         ) : null}
 
         <div className="mt-4 flex gap-2">
           <Button onClick={accept} className="flex-1">
-            {mode === "ios-manual" ? "Show me how" : "Install FYNDO"}
+            {mode === "ios-manual" ? t("common.install.iosCta") : t("common.install.cta")}
           </Button>
           <Button variant="ghost" onClick={dismiss}>
-            Maybe later
+            {t("common.install.later")}
           </Button>
         </div>
       </div>

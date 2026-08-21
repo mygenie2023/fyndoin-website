@@ -3,32 +3,22 @@ import { SiteLayout } from "@/components/site/SiteLayout";
 import { Breadcrumbs, breadcrumbSchema } from "@/components/site/Breadcrumbs";
 import { Reveal, Section, SectionHeading } from "@/components/site/Section";
 import { AppCTA, CategoryGrid } from "@/components/site/Sections";
-import { SERVICES } from "@/lib/services";
+import { pageMeta, t as tHead } from "@/i18n/head";
+import { useI18n } from "@/i18n/provider";
+import { useServices } from "@/i18n/taxonomy";
 import { track } from "@/lib/fyndo";
-
-const TITLE = "Local Services on FYNDO — Every Trade, Grouped by Category";
-const DESC =
-  "Browse local services on FYNDO: home & construction, repair, rental, agriculture, labour, emergency, health & beauty and more. Find skilled operators near you.";
 
 export const Route = createFileRoute("/services/")({
   head: () => ({
-    meta: [
-      { title: TITLE },
-      { name: "description", content: DESC },
-      { property: "og:title", content: TITLE },
-      { property: "og:description", content: DESC },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: "/services" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
+    meta: pageMeta("services.index.meta", "/services"),
     links: [{ rel: "canonical", href: "/services" }],
     scripts: [
       {
         type: "application/ld+json",
         children: JSON.stringify(
           breadcrumbSchema([
-            { name: "Home", path: "/" },
-            { name: "Services", path: "/services" },
+            { name: tHead("common.nav.home"), path: "/" },
+            { name: tHead("common.footer.links.services"), path: "/services" },
           ]),
         ),
       },
@@ -38,17 +28,24 @@ export const Route = createFileRoute("/services/")({
 });
 
 function ServicesPage() {
+  const t = useI18n().t;
+  const services = useServices();
+
   return (
     <SiteLayout>
       <Section className="hero-wash pt-10 pb-4">
-        <Breadcrumbs items={[{ label: "Home", to: "/" }, { label: "Services" }]} />
+        <Breadcrumbs
+          items={[
+            { label: t("common.nav.home"), to: "/" },
+            { label: t("common.footer.links.services") },
+          ]}
+        />
         <div className="mt-6 max-w-3xl">
           <h1 className="text-4xl leading-[1.05] font-extrabold sm:text-5xl">
-            Local services and trades on FYNDO
+            {t("services.index.hero.title")}
           </h1>
           <p className="mt-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
-            Trades are grouped into broad categories so browsing stays simple. Categories and trades
-            are adjusted per region to match what's actually in demand locally.
+            {t("services.index.hero.subtitle")}
           </p>
         </div>
       </Section>
@@ -59,17 +56,17 @@ function ServicesPage() {
 
       <Section className="bg-secondary/40">
         <SectionHeading
-          eyebrow="Service guides"
-          title="Popular trades people search for"
-          description="Detailed pages for the trades where we have genuinely useful guidance to share."
+          eyebrow={t("services.index.guides.eyebrow")}
+          title={t("services.index.guides.title")}
+          description={t("services.index.guides.description")}
         />
         <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {SERVICES.map((s, i) => (
+          {services.map((s, i) => (
             <Reveal key={s.slug} delay={(i % 3) * 70}>
               <Link
                 to="/services/$service"
                 params={{ service: s.slug }}
-                onClick={() => track("service_category_clicked", { trade: s.name })}
+                onClick={() => track("service_category_clicked", { trade: s.slug })}
                 className="surface-card flex h-full flex-col justify-between gap-3 p-5 transition-transform duration-300 hover:-translate-y-1"
               >
                 <div>
@@ -77,7 +74,9 @@ function ServicesPage() {
                   <p className="mt-1 text-xs font-medium text-primary">{s.category}</p>
                   <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{s.summary}</p>
                 </div>
-                <span className="text-sm font-semibold text-primary">Read more →</span>
+                <span className="text-sm font-semibold text-primary">
+                  {t("services.index.guides.readMore")}
+                </span>
               </Link>
             </Reveal>
           ))}
