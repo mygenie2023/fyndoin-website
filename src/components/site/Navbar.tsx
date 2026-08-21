@@ -10,11 +10,27 @@ import { cn } from "@/lib/utils";
 const NAV = [
   { to: "/how-it-works", key: "howItWorks" },
   { to: "/services", key: "services" },
+  { to: "/for-work-providers", key: "forWorkProviders" },
   { to: "/for-operators", key: "findWork" },
   { to: "/trust", key: "trust" },
+] as const;
+
+/** Secondary items: only in the collapsed menu, keeping the header uncluttered. */
+const SECONDARY = [
   { to: "/about", key: "about" },
   { to: "/faq", key: "faq" },
 ] as const;
+
+function PhoneIcon({ className = "size-[1.15rem]" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className={className} fill="none" stroke="currentColor" strokeWidth="2">
+      <path
+        d="M6.6 3h2.2l1.4 3.5-1.8 1.3a12 12 0 0 0 5.8 5.8l1.3-1.8L19 13.2v2.2A2.4 2.4 0 0 1 16.4 18 13.4 13.4 0 0 1 6 7.6 2.4 2.4 0 0 1 6.6 3Z"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
 
 export function Navbar() {
   const t = useT();
@@ -59,6 +75,15 @@ export function Navbar() {
         </nav>
 
         <div className="flex min-w-0 items-center gap-2">
+          <LanguageSwitcher className="hidden md:block" />
+          <a
+            href={CONTACT.phoneHref}
+            title={t("common.contact.callAria")}
+            aria-label={t("common.contact.callAria")}
+            className="hidden size-10 shrink-0 place-items-center rounded-full border border-border bg-card text-foreground transition-colors hover:bg-secondary md:grid"
+          >
+            <PhoneIcon />
+          </a>
           <OpenAppButton source="navbar" className="hidden sm:inline-flex" />
           <OpenAppButton
             source="navbar_mobile"
@@ -66,26 +91,6 @@ export function Navbar() {
             size="sm"
             className="sm:hidden"
           />
-          <LanguageSwitcher className="hidden lg:block" />
-          <Link
-            to="/contact"
-            className="hidden h-10 items-center rounded-full px-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground lg:inline-flex"
-          >
-            {t("common.nav.contact")}
-          </Link>
-          <a
-            href={CONTACT.phoneHref}
-            aria-label={t("common.contact.callAria")}
-            className="hidden h-10 items-center gap-1.5 rounded-full border border-border bg-card px-3 text-sm font-semibold transition-colors hover:bg-secondary xl:inline-flex"
-          >
-            <svg viewBox="0 0 24 24" aria-hidden="true" className="size-4" fill="none" stroke="currentColor" strokeWidth="2">
-              <path
-                d="M6.6 3h2.2l1.4 3.5-1.8 1.3a12 12 0 0 0 5.8 5.8l1.3-1.8L19 13.2v2.2A2.4 2.4 0 0 1 16.4 18 13.4 13.4 0 0 1 6 7.6 2.4 2.4 0 0 1 6.6 3Z"
-                strokeLinejoin="round"
-              />
-            </svg>
-            <span className="whitespace-nowrap">{CONTACT.phone}</span>
-          </a>
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}
@@ -108,7 +113,7 @@ export function Navbar() {
       {open && (
         <div id="mobile-menu" className="border-t border-border bg-background xl:hidden">
           <nav aria-label={t("common.nav.mobileAria")} className="container-page flex flex-col gap-1 py-4">
-            {NAV.map((item) => (
+            {[...NAV, ...SECONDARY].map((item) => (
               <Link
                 key={item.to}
                 to={item.to}
@@ -118,18 +123,12 @@ export function Navbar() {
                 {t(`common.nav.${item.key}`)}
               </Link>
             ))}
-            <Link
-              to="/contact"
-              onClick={() => setOpen(false)}
-              className="rounded-xl px-3 py-3 text-base font-medium hover:bg-secondary"
-            >
-              {t("common.nav.contact")}
-            </Link>
             <a
               href={CONTACT.phoneHref}
               aria-label={t("common.contact.callAria")}
-              className="rounded-xl px-3 py-3 text-base font-medium hover:bg-secondary"
+              className="flex items-center gap-2 rounded-xl px-3 py-3 text-base font-medium hover:bg-secondary"
             >
+              <PhoneIcon className="size-5" />
               {CONTACT.phone}
             </a>
             <Link

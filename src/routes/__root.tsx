@@ -12,8 +12,15 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { LanguageProvider } from "@/i18n/provider";
-import { getCurrentLang, LANG_TAGS } from "@/i18n/lang";
+import { getCurrentLang, setCurrentLang, LANG_TAGS } from "@/i18n/lang";
+import { createIsomorphicFn } from "@tanstack/react-start";
+import { readRequestLang } from "@/i18n/request-lang.server";
 import { t as tHead, langMeta } from "@/i18n/head";
+
+/** On the server, adopt the language cookie; on the client the module already has it. */
+const syncRequestLang = createIsomorphicFn()
+  .client(() => undefined)
+  .server(() => setCurrentLang(readRequestLang()));
 
 function NotFoundComponent() {
   return (
@@ -76,6 +83,11 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  // SSR renders in the visitor's persisted language so markup, metadata and
+  // hydration all agree on the same dictionary.
+  beforeLoad: () => {
+    syncRequestLang();
+  },
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -100,9 +112,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: "https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap",
       },
       { rel: "manifest", href: "/manifest.webmanifest" },
-      { rel: "apple-touch-icon", sizes: "180x180", href: "/icons/apple-touch-icon.png" },
-      { rel: "icon", type: "image/png", sizes: "192x192", href: "/icons/icon-192.png" },
-      { rel: "icon", type: "image/png", href: "/favicon.png" },
+      { rel: "icon", href: "/favicon.ico?v=3", sizes: "32x32" },
+      { rel: "icon", type: "image/png", sizes: "64x64", href: "/favicon.png?v=3" },
+      { rel: "icon", type: "image/png", sizes: "192x192", href: "/icons/icon-192.png?v=3" },
+      { rel: "apple-touch-icon", sizes: "180x180", href: "/icons/apple-touch-icon.png?v=3" },
+
     ],
     scripts: [
       {
@@ -112,6 +126,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "@type": "Organization",
           name: "FYNDO",
           slogan: "Your Work. Our Network.",
+          areaServed: {
+            "@type": "AdministrativeArea",
+            name: "Dakshina Kannada",
+            address: { "@type": "PostalAddress", addressRegion: "Karnataka", addressCountry: "IN" },
+          },
+          email: "auroviafyndo@gmail.com",
+          telephone: "+919663474365",
           description:
             "Hyperlocal skilled workers and local services marketplace connecting Work Providers with Operators nearby.",
         }),

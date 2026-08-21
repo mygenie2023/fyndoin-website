@@ -4,7 +4,7 @@ import { Breadcrumbs, breadcrumbSchema } from "@/components/site/Breadcrumbs";
 import { Section } from "@/components/site/Section";
 import { AppCTA, TrustSection } from "@/components/site/Sections";
 import { pageMeta, t as tHead } from "@/i18n/head";
-import { useT } from "@/i18n/provider";
+import { useI18n } from "@/i18n/provider";
 
 export const Route = createFileRoute("/trust")({
   head: () => ({
@@ -26,8 +26,8 @@ export const Route = createFileRoute("/trust")({
 });
 
 function TrustPage() {
-  const t = useT();
-  const safetyItems = t("pages.trust.safety.items") as unknown as string[];
+  const { t, tx } = useI18n();
+  const safetyItems = tx<string[]>("pages.trust.safety.items");
   return (
     <SiteLayout>
       <Section className="hero-wash pt-10 pb-4">

@@ -58,6 +58,11 @@ function readStored(): Lang {
  */
 let currentLang: Lang = typeof window === "undefined" ? DEFAULT_LANG : readStored();
 
+/** Server-side per-request override, applied in the root route's beforeLoad. */
+export function setCurrentLang(lang: Lang): void {
+  currentLang = lang;
+}
+
 export function getCurrentLang(): Lang {
   return currentLang;
 }

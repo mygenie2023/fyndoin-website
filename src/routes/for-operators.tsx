@@ -5,7 +5,7 @@ import { Reveal, Section, SectionHeading } from "@/components/site/Section";
 import { AppCTA, TrustSection } from "@/components/site/Sections";
 import { OpenAppButton } from "@/components/ui/cta";
 import { pageMeta, t as tHead } from "@/i18n/head";
-import { useT } from "@/i18n/provider";
+import { useI18n } from "@/i18n/provider";
 
 export const Route = createFileRoute("/for-operators")({
   head: () => ({
@@ -27,11 +27,8 @@ export const Route = createFileRoute("/for-operators")({
 });
 
 function OperatorsPage() {
-  const t = useT();
-  const benefits = t("pages.forOperators.benefits.items") as unknown as {
-    title: string;
-    body: string;
-  }[];
+  const { t, tx } = useI18n();
+  const benefits = tx<Array<{ title: string; body: string }>>("pages.forOperators.benefits.items");
   return (
     <SiteLayout>
       <Section className="hero-wash pt-10 pb-6">

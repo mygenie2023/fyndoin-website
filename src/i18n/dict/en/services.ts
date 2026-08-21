@@ -1,9 +1,9 @@
 const services = {
   index: {
     meta: {
-      title: "Local Services on FYNDO — Every Trade, Grouped by Category",
+      title: "Local Services on FYNDO — Every Trade, by Category",
       description:
-        "Browse local services on FYNDO: home & construction, repair, rental, agriculture, labour, emergency, health & beauty and more. Find skilled operators near you.",
+        "Browse local services on FYNDO: home & construction, repair, rental, agriculture, labour, emergency, health & beauty and more. Find skilled operators near you. Available across all taluks of Dakshina Kannada.",
     },
     hero: {
       title: "Local services and trades on FYNDO",

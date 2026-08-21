@@ -4,30 +4,20 @@ import { Breadcrumbs, breadcrumbSchema } from "@/components/site/Breadcrumbs";
 import { Section } from "@/components/site/Section";
 import { AppCTA } from "@/components/site/Sections";
 import { FaqList, faqSchema } from "@/components/site/Faq";
-
-const TITLE = "FYNDO FAQ — Common Questions About Local Work and Services";
-const DESC =
-  "Answers to common questions about FYNDO: what it is, how the marketplace works, who can use it, how trust and ratings work, and how to install FYNDO on your phone.";
+import { pageMeta, t as tHead } from "@/i18n/head";
+import { useT } from "@/i18n/provider";
 
 export const Route = createFileRoute("/faq")({
   head: () => ({
-    meta: [
-      { title: TITLE },
-      { name: "description", content: DESC },
-      { property: "og:title", content: TITLE },
-      { property: "og:description", content: DESC },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: "/faq" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
+    meta: pageMeta("extra.faq.meta", "/faq"),
     links: [{ rel: "canonical", href: "/faq" }],
     scripts: [
       {
         type: "application/ld+json",
         children: JSON.stringify([
           breadcrumbSchema([
-            { name: "Home", path: "/" },
-            { name: "FAQ", path: "/faq" },
+            { name: tHead("extra.faq.breadcrumb.home"), path: "/" },
+            { name: tHead("extra.faq.breadcrumb.faq"), path: "/faq" },
           ]),
           faqSchema(),
         ]),
@@ -38,13 +28,19 @@ export const Route = createFileRoute("/faq")({
 });
 
 function FaqPage() {
+  const t = useT();
   return (
     <SiteLayout>
       <Section className="hero-wash pt-10 pb-4">
-        <Breadcrumbs items={[{ label: "Home", to: "/" }, { label: "FAQ" }]} />
+        <Breadcrumbs
+          items={[
+            { label: t("extra.faq.breadcrumb.home"), to: "/" },
+            { label: t("extra.faq.breadcrumb.faq") },
+          ]}
+        />
         <div className="mt-6 max-w-3xl">
           <h1 className="text-4xl leading-[1.05] font-extrabold sm:text-5xl">
-            Questions people ask about FYNDO
+            {t("extra.faq.heading")}
           </h1>
         </div>
       </Section>
