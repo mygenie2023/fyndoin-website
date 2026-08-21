@@ -3,35 +3,25 @@ import { SiteLayout } from "@/components/site/SiteLayout";
 import { Breadcrumbs, breadcrumbSchema } from "@/components/site/Breadcrumbs";
 import { Reveal, Section, SectionHeading } from "@/components/site/Section";
 import { AppCTA, HowItWorksSection, STEPS, TrustSection } from "@/components/site/Sections";
-
-const TITLE = "How FYNDO Works — Post Work, Find Operators, Get It Done";
-const DESC =
-  "See how FYNDO works for both sides: Work Providers post a requirement with location and budget, Operators discover nearby work, and both connect directly until the job is complete.";
+import { pageMeta, t as tHead } from "@/i18n/head";
+import { useT } from "@/i18n/provider";
 
 export const Route = createFileRoute("/how-it-works")({
   head: () => ({
-    meta: [
-      { title: TITLE },
-      { name: "description", content: DESC },
-      { property: "og:title", content: TITLE },
-      { property: "og:description", content: DESC },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: "/how-it-works" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
+    meta: pageMeta("pages.howItWorks.meta", "/how-it-works"),
     links: [{ rel: "canonical", href: "/how-it-works" }],
     scripts: [
       {
         type: "application/ld+json",
         children: JSON.stringify([
           breadcrumbSchema([
-            { name: "Home", path: "/" },
-            { name: "How FYNDO Works", path: "/how-it-works" },
+            { name: tHead("pages.howItWorks.breadcrumb.home"), path: "/" },
+            { name: tHead("pages.howItWorks.breadcrumb.current"), path: "/how-it-works" },
           ]),
           {
             "@context": "https://schema.org",
             "@type": "HowTo",
-            name: "How FYNDO works",
+            name: tHead("pages.howItWorks.jsonLd.howToName"),
             step: STEPS.map((s) => ({ "@type": "HowToStep", name: s.title, text: s.body })),
           },
         ]),
@@ -40,22 +30,6 @@ export const Route = createFileRoute("/how-it-works")({
   }),
   component: HowItWorksPage,
 });
-
-const PROVIDER_FLOW = [
-  "Sign up and verify your phone number",
-  "Post the work with details, budget and location",
-  "View matched operators nearby",
-  "Contact and assign an operator",
-  "Track status, mark complete and rate",
-];
-
-const OPERATOR_FLOW = [
-  "Sign up and verify your phone number",
-  "Build a profile with skills, area and rate",
-  "Browse or get notified of nearby work",
-  "Respond and confirm directly",
-  "Complete the job and receive a rating",
-];
 
 function Flow({ title, steps, tone }: { title: string; steps: string[]; tone: "primary" | "accent" }) {
   return (
@@ -83,17 +57,24 @@ function Flow({ title, steps, tone }: { title: string; steps: string[]; tone: "p
 }
 
 function HowItWorksPage() {
+  const t = useT();
+  const providerSteps = t("pages.howItWorks.flow.workProvider.steps") as unknown as string[];
+  const operatorSteps = t("pages.howItWorks.flow.operator.steps") as unknown as string[];
   return (
     <SiteLayout>
       <Section className="hero-wash pt-10 pb-4">
-        <Breadcrumbs items={[{ label: "Home", to: "/" }, { label: "How FYNDO Works" }]} />
+        <Breadcrumbs
+          items={[
+            { label: t("pages.howItWorks.breadcrumb.home"), to: "/" },
+            { label: t("pages.howItWorks.breadcrumb.current") },
+          ]}
+        />
         <div className="mt-6 max-w-3xl">
           <h1 className="text-4xl leading-[1.05] font-extrabold sm:text-5xl">
-            How FYNDO works, on both sides of the job
+            {t("pages.howItWorks.hero.title")}
           </h1>
           <p className="mt-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
-            FYNDO is a two-sided local marketplace. One side posts work. The other side does it.
-            Everything in between is designed to be as short as possible.
+            {t("pages.howItWorks.hero.body")}
           </p>
         </div>
       </Section>
@@ -102,16 +83,16 @@ function HowItWorksPage() {
 
       <Section>
         <SectionHeading
-          eyebrow="Step by step"
-          title="The full flow, end to end"
-          description="Every step below is a real screen in the FYNDO app."
+          eyebrow={t("pages.howItWorks.flow.eyebrow")}
+          title={t("pages.howItWorks.flow.title")}
+          description={t("pages.howItWorks.flow.description")}
         />
         <div className="mt-12 grid gap-5 lg:grid-cols-2">
           <Reveal>
-            <Flow title="Work Provider" steps={PROVIDER_FLOW} tone="primary" />
+            <Flow title={t("pages.howItWorks.flow.workProvider.title")} steps={providerSteps} tone="primary" />
           </Reveal>
           <Reveal delay={110}>
-            <Flow title="Operator" steps={OPERATOR_FLOW} tone="accent" />
+            <Flow title={t("pages.howItWorks.flow.operator.title")} steps={operatorSteps} tone="accent" />
           </Reveal>
         </div>
       </Section>
