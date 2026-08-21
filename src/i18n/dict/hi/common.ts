@@ -13,6 +13,7 @@ const common = {
     mobileAria: "मोबाइल मेन्यू",
     howItWorks: "FYNDO कैसे काम करता है",
     services: "सेवा खोजें",
+    forWorkProviders: "काम देने वालों के लिए",
     findWork: "काम खोजें",
     trust: "भरोसा और सुरक्षा",
     about: "हमारे बारे में",
