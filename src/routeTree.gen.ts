@@ -12,7 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AppRouteImport } from './routes/app'
-import { Route as ContactRouteImport } from './routes/contact'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as ForOperatorsRouteImport } from './routes/for-operators'
 import { Route as ForWorkProvidersRouteImport } from './routes/for-work-providers'
@@ -37,11 +36,6 @@ const AboutRoute = AboutRouteImport.update({
 const AppRoute = AppRouteImport.update({
   id: '/app',
   path: '/app',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContactRoute = ContactRouteImport.update({
-  id: '/contact',
-  path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FaqRoute = FaqRouteImport.update({
@@ -99,7 +93,6 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/app': typeof AppRoute
-  '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
   '/for-operators': typeof ForOperatorsRoute
   '/for-work-providers': typeof ForWorkProvidersRoute
@@ -115,7 +108,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/app': typeof AppRoute
-  '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
   '/for-operators': typeof ForOperatorsRoute
   '/for-work-providers': typeof ForWorkProvidersRoute
@@ -132,7 +124,6 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/app': typeof AppRoute
-  '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
   '/for-operators': typeof ForOperatorsRoute
   '/for-work-providers': typeof ForWorkProvidersRoute
@@ -150,7 +141,6 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/app'
-    | '/contact'
     | '/faq'
     | '/for-operators'
     | '/for-work-providers'
@@ -166,7 +156,6 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/app'
-    | '/contact'
     | '/faq'
     | '/for-operators'
     | '/for-work-providers'
@@ -182,7 +171,6 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/app'
-    | '/contact'
     | '/faq'
     | '/for-operators'
     | '/for-work-providers'
@@ -199,7 +187,6 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   AppRoute: typeof AppRoute
-  ContactRoute: typeof ContactRoute
   FaqRoute: typeof FaqRoute
   ForOperatorsRoute: typeof ForOperatorsRoute
   ForWorkProvidersRoute: typeof ForWorkProvidersRoute
@@ -233,13 +220,6 @@ declare module '@tanstack/react-router' {
       path: '/app'
       fullPath: '/app'
       preLoaderRoute: typeof AppRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contact': {
-      id: '/contact'
-      path: '/contact'
-      fullPath: '/contact'
-      preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/faq': {
@@ -319,7 +299,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   AppRoute: AppRoute,
-  ContactRoute: ContactRoute,
   FaqRoute: FaqRoute,
   ForOperatorsRoute: ForOperatorsRoute,
   ForWorkProvidersRoute: ForWorkProvidersRoute,
