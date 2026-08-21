@@ -1,19 +1,23 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Logo } from "./Logo";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 import { OpenAppButton } from "@/components/ui/cta";
+import { useT } from "@/i18n/provider";
+import { CONTACT } from "@/lib/fyndo";
 import { cn } from "@/lib/utils";
 
 const NAV = [
-  { to: "/how-it-works", label: "How FYNDO Works" },
-  { to: "/services", label: "Find a Service" },
-  { to: "/for-operators", label: "Find Work" },
-  { to: "/trust", label: "Trust & Safety" },
-  { to: "/about", label: "About" },
-  { to: "/faq", label: "FAQ" },
+  { to: "/how-it-works", key: "howItWorks" },
+  { to: "/services", key: "services" },
+  { to: "/for-operators", key: "findWork" },
+  { to: "/trust", key: "trust" },
+  { to: "/about", key: "about" },
+  { to: "/faq", key: "faq" },
 ] as const;
 
 export function Navbar() {
+  const t = useT();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -38,10 +42,10 @@ export function Navbar() {
         scrolled ? "border-b border-border bg-background/85 backdrop-blur-xl" : "bg-transparent",
       )}
     >
-      <div className="container-page flex h-16 items-center justify-between gap-4 lg:h-[4.5rem]">
+      <div className="container-page flex h-16 items-center justify-between gap-3 lg:h-[4.5rem]">
         <Logo />
 
-        <nav aria-label="Main" className="hidden items-center gap-1 lg:flex">
+        <nav aria-label={t("common.nav.aria")} className="hidden items-center gap-1 xl:flex">
           {NAV.map((item) => (
             <Link
               key={item.to}
@@ -49,21 +53,46 @@ export function Navbar() {
               className="rounded-full px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
               activeProps={{ className: "text-foreground bg-secondary" }}
             >
-              {item.label}
+              {t(`common.nav.${item.key}`)}
             </Link>
           ))}
         </nav>
 
-        <div className="flex items-center gap-2">
+        <div className="flex min-w-0 items-center gap-2">
           <OpenAppButton source="navbar" className="hidden sm:inline-flex" />
-          <OpenAppButton source="navbar_mobile" label="Open App" size="sm" className="sm:hidden" />
+          <OpenAppButton
+            source="navbar_mobile"
+            label={t("common.cta.openAppShort")}
+            size="sm"
+            className="sm:hidden"
+          />
+          <LanguageSwitcher className="hidden lg:block" />
+          <Link
+            to="/contact"
+            className="hidden h-10 items-center rounded-full px-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground lg:inline-flex"
+          >
+            {t("common.nav.contact")}
+          </Link>
+          <a
+            href={CONTACT.phoneHref}
+            aria-label={t("common.contact.callAria")}
+            className="hidden h-10 items-center gap-1.5 rounded-full border border-border bg-card px-3 text-sm font-semibold transition-colors hover:bg-secondary xl:inline-flex"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true" className="size-4" fill="none" stroke="currentColor" strokeWidth="2">
+              <path
+                d="M6.6 3h2.2l1.4 3.5-1.8 1.3a12 12 0 0 0 5.8 5.8l1.3-1.8L19 13.2v2.2A2.4 2.4 0 0 1 16.4 18 13.4 13.4 0 0 1 6 7.6 2.4 2.4 0 0 1 6.6 3Z"
+                strokeLinejoin="round"
+              />
+            </svg>
+            <span className="whitespace-nowrap">{CONTACT.phone}</span>
+          </a>
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
             aria-controls="mobile-menu"
-            aria-label={open ? "Close menu" : "Open menu"}
-            className="grid size-10 place-items-center rounded-full border border-border bg-card lg:hidden"
+            aria-label={open ? t("common.nav.closeMenu") : t("common.nav.openMenu")}
+            className="grid size-10 shrink-0 place-items-center rounded-full border border-border bg-card xl:hidden"
           >
             <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2">
               {open ? (
@@ -77,8 +106,8 @@ export function Navbar() {
       </div>
 
       {open && (
-        <div id="mobile-menu" className="border-t border-border bg-background lg:hidden">
-          <nav aria-label="Mobile" className="container-page flex flex-col gap-1 py-4">
+        <div id="mobile-menu" className="border-t border-border bg-background xl:hidden">
+          <nav aria-label={t("common.nav.mobileAria")} className="container-page flex flex-col gap-1 py-4">
             {NAV.map((item) => (
               <Link
                 key={item.to}
@@ -86,7 +115,7 @@ export function Navbar() {
                 onClick={() => setOpen(false)}
                 className="rounded-xl px-3 py-3 text-base font-medium hover:bg-secondary"
               >
-                {item.label}
+                {t(`common.nav.${item.key}`)}
               </Link>
             ))}
             <Link
@@ -94,14 +123,21 @@ export function Navbar() {
               onClick={() => setOpen(false)}
               className="rounded-xl px-3 py-3 text-base font-medium hover:bg-secondary"
             >
-              Contact
+              {t("common.nav.contact")}
             </Link>
+            <a
+              href={CONTACT.phoneHref}
+              aria-label={t("common.contact.callAria")}
+              className="rounded-xl px-3 py-3 text-base font-medium hover:bg-secondary"
+            >
+              {CONTACT.phone}
+            </a>
             <Link
               to="/app"
               onClick={() => setOpen(false)}
               className="rounded-xl px-3 py-3 text-base font-semibold text-primary hover:bg-secondary"
             >
-              Install FYNDO on your phone
+              {t("common.nav.installOnPhone")}
             </Link>
           </nav>
         </div>
