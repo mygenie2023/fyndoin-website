@@ -28,7 +28,7 @@ export function InstallFyndoPrompt() {
       setVisible(true);
       track("install_prompt_shown", { mode });
     };
-    const timer = window.setTimeout(reveal, 12000);
+    const timer = window.setTimeout(reveal, 5000);
     const onScroll = () => {
       if (window.scrollY > window.innerHeight * 0.8) reveal();
     };
@@ -43,7 +43,6 @@ export function InstallFyndoPrompt() {
 
   const dismiss = () => {
     setVisible(false);
-    snooze();
     track("install_prompt_dismissed", { mode });
   };
 
@@ -56,7 +55,6 @@ export function InstallFyndoPrompt() {
     if (outcome === "accepted") track("install_prompt_accepted", { mode });
     else track("install_prompt_dismissed", { mode });
     setVisible(false);
-    snooze();
   };
 
   return (
