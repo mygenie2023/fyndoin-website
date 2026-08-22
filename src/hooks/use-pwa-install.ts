@@ -6,8 +6,6 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 const DISMISS_KEY = "fyndo.install.dismissed";
-/** Don't nag: stay quiet for two weeks after a dismissal. */
-const SNOOZE_MS = 14 * 24 * 60 * 60 * 1000;
 
 export type InstallMode = "native" | "ios-manual" | "unavailable";
 
