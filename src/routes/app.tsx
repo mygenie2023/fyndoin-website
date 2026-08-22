@@ -1,7 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { SiteLayout } from "@/components/site/SiteLayout";
-import { Section } from "@/components/site/Section";
 import { Button, ButtonLink } from "@/components/ui/cta";
 import { APP_IS_EXTERNAL, APP_URL, track } from "@/lib/fyndo";
 import { useInstallPrompt } from "@/hooks/use-pwa-install";
@@ -17,6 +15,11 @@ export const Route = createFileRoute("/app")({
   component: AppEntryPage,
 });
 
+/**
+ * /app is the application entry point — deliberately isolated from the
+ * marketing site: no site header, nav, marketing sections, footer or
+ * sticky marketing bar. Only the app shell renders here.
+ */
 function AppEntryPage() {
   const t = useT();
   const { tx } = useI18n();
@@ -40,14 +43,29 @@ function AppEntryPage() {
   const iosSteps = tx<string[]>("extra.app.iosSteps");
 
   return (
-    <SiteLayout>
-      <Section className="hero-wash">
-        <div className="mx-auto max-w-xl text-center">
-          <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-semibold text-primary">
+    <div
+      className="flex min-h-screen flex-col bg-background"
+      style={{
+        paddingTop: "env(safe-area-inset-top)",
+        paddingBottom: "env(safe-area-inset-bottom)",
+      }}
+    >
+      <main id="main" className="flex flex-1 flex-col items-center justify-center px-5 py-12">
+        <div className="w-full max-w-xl text-center">
+          <img
+            src="/icons/icon-192.png"
+            alt="FYNDO"
+            width={64}
+            height={64}
+            className="mx-auto size-16 object-contain"
+          />
+
+          <span className="mt-6 inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-semibold text-primary">
             <span className="size-1.5 rounded-full bg-accent" aria-hidden="true" />
             {t("extra.app.readyBadge")}
           </span>
-          <h1 className="mt-5 text-4xl leading-[1.05] font-extrabold sm:text-5xl">
+
+          <h1 className="mt-5 text-3xl leading-[1.08] font-extrabold sm:text-4xl">
             {installed
               ? t("extra.app.heading.installed")
               : isMobile
@@ -105,74 +123,74 @@ function AppEntryPage() {
           {!isMobile && !isIos && (
             <p className="mt-6 text-xs text-muted-foreground">{t("extra.app.desktopNote")}</p>
           )}
+
+          {/* Remembered phone number: convenience only, never proof of a session. */}
+          {showNumberCard && (
+            <div className="surface-card mx-auto mt-10 max-w-sm p-6 text-left">
+              <h2 className="font-display text-base font-bold">{t("extra.app.phoneCard.heading")}</h2>
+              {editing ? (
+                <>
+                  <label htmlFor="phone" className="sr-only">
+                    {t("extra.app.phoneCard.inputLabel")}
+                  </label>
+                  <input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    inputMode="numeric"
+                    autoComplete="tel"
+                    value={draft}
+                    onChange={(e) => setDraft(normalisePhone(e.target.value))}
+                    placeholder={t("extra.app.phoneCard.placeholder")}
+                    className="mt-2 w-full rounded-xl border border-input bg-card px-4 py-3 text-lg tracking-wide outline-none focus:border-primary"
+                  />
+                  <Button
+                    className="mt-4 w-full"
+                    onClick={() => {
+                      remember(draft);
+                      setEditing(false);
+                    }}
+                    disabled={draft.length < 8}
+                  >
+                    {t("extra.app.phoneCard.continue")}
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <p className="mt-2 text-2xl font-semibold tracking-wide">{formatPhone(phone)}</p>
+                  <p className="mt-2 text-xs text-muted-foreground">{t("extra.app.phoneCard.savedNote")}</p>
+                  <Button className="mt-4 w-full" onClick={openApp}>
+                    {t("extra.app.phoneCard.continue")}
+                  </Button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      forget();
+                      setEditing(true);
+                      setDraft("");
+                    }}
+                    className="mt-3 w-full text-center text-sm font-medium text-primary underline-offset-4 hover:underline"
+                  >
+                    {t("extra.app.phoneCard.useDifferent")}
+                  </button>
+                </>
+              )}
+            </div>
+          )}
+
+          {hydrated && !showNumberCard && (
+            <p className="mt-8 text-sm">
+              <button
+                type="button"
+                onClick={() => setEditing(true)}
+                className="font-medium text-primary underline-offset-4 hover:underline"
+              >
+                {t("extra.app.rememberLink")}
+              </button>
+            </p>
+          )}
         </div>
-
-        {/* Remembered phone number: convenience only, never proof of a session. */}
-        {showNumberCard && (
-          <div className="surface-card mx-auto mt-10 max-w-sm p-6 text-left">
-            <h2 className="font-display text-base font-bold">{t("extra.app.phoneCard.heading")}</h2>
-            {editing ? (
-              <>
-                <label htmlFor="phone" className="sr-only">
-                  {t("extra.app.phoneCard.inputLabel")}
-                </label>
-                <input
-                  id="phone"
-                  name="phone"
-                  type="tel"
-                  inputMode="numeric"
-                  autoComplete="tel"
-                  value={draft}
-                  onChange={(e) => setDraft(normalisePhone(e.target.value))}
-                  placeholder={t("extra.app.phoneCard.placeholder")}
-                  className="mt-2 w-full rounded-xl border border-input bg-card px-4 py-3 text-lg tracking-wide outline-none focus:border-primary"
-                />
-                <Button
-                  className="mt-4 w-full"
-                  onClick={() => {
-                    remember(draft);
-                    setEditing(false);
-                  }}
-                  disabled={draft.length < 8}
-                >
-                  {t("extra.app.phoneCard.continue")}
-                </Button>
-              </>
-            ) : (
-              <>
-                <p className="mt-2 text-2xl font-semibold tracking-wide">{formatPhone(phone)}</p>
-                <p className="mt-2 text-xs text-muted-foreground">{t("extra.app.phoneCard.savedNote")}</p>
-                <Button className="mt-4 w-full" onClick={openApp}>
-                  {t("extra.app.phoneCard.continue")}
-                </Button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    forget();
-                    setEditing(true);
-                    setDraft("");
-                  }}
-                  className="mt-3 w-full text-center text-sm font-medium text-primary underline-offset-4 hover:underline"
-                >
-                  {t("extra.app.phoneCard.useDifferent")}
-                </button>
-              </>
-            )}
-          </div>
-        )}
-
-        {hydrated && !showNumberCard && (
-          <p className="mt-8 text-center text-sm">
-            <button
-              type="button"
-              onClick={() => setEditing(true)}
-              className="font-medium text-primary underline-offset-4 hover:underline"
-            >
-              {t("extra.app.rememberLink")}
-            </button>
-          </p>
-        )}
-      </Section>
-    </SiteLayout>
+      </main>
+    </div>
   );
 }
