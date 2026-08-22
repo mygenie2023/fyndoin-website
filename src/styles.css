@@ -113,9 +113,12 @@
   }
 
   html {
+    /* Matches the manifest background_color so the PWA splash hand-off doesn't flash. */
+    background-color: var(--color-background);
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
   }
+
 
   body {
     background-color: var(--color-background);
