@@ -52,11 +52,22 @@ function readStored(): Lang {
   return DEFAULT_LANG;
 }
 
+/** The language the server actually rendered, read from <html lang>. */
+function readServerRenderedLang(): Lang {
+  if (typeof document === "undefined") return DEFAULT_LANG;
+  const tag = document.documentElement.lang;
+  const hit = (LANGS as readonly Lang[]).find((l) => LANG_TAGS[l] === tag);
+  return hit ?? DEFAULT_LANG;
+}
+
 /**
- * Module-scoped active language. On the server this is always the default
- * (Kannada), which keeps SSR output and first-paint hydration identical.
+ * Module-scoped active language. On the client this starts from the language
+ * the server rendered so hydration never mismatches (which would otherwise
+ * regenerate the whole tree and flash on launch). The provider switches to the
+ * stored preference after mount.
  */
-let currentLang: Lang = typeof window === "undefined" ? DEFAULT_LANG : readStored();
+let currentLang: Lang = typeof window === "undefined" ? DEFAULT_LANG : readServerRenderedLang();
+
 
 /** Server-side per-request override, applied in the root route's beforeLoad. */
 export function setCurrentLang(lang: Lang): void {
