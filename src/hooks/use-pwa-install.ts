@@ -6,8 +6,6 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 const DISMISS_KEY = "fyndo.install.dismissed";
-/** Don't nag: stay quiet for two weeks after a dismissal. */
-const SNOOZE_MS = 14 * 24 * 60 * 60 * 1000;
 
 export type InstallMode = "native" | "ios-manual" | "unavailable";
 
@@ -29,12 +27,9 @@ export function useInstallPrompt() {
         (window.navigator as Navigator & { standalone?: boolean }).standalone === true,
     );
 
-    try {
-      const at = Number(window.localStorage.getItem(DISMISS_KEY) || 0);
-      setSnoozed(Boolean(at) && Date.now() - at < SNOOZE_MS);
-    } catch {
-      setSnoozed(false);
-    }
+    // The prompt is shown on every page load until the app is actually
+    // installed — dismissals are intentionally not remembered.
+    setSnoozed(false);
 
     const onPrompt = (e: Event) => {
       e.preventDefault();

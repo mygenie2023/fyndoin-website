@@ -28,15 +28,8 @@ export function InstallFyndoPrompt() {
       setVisible(true);
       track("install_prompt_shown", { mode });
     };
-    const timer = window.setTimeout(reveal, 5000);
-    const onScroll = () => {
-      if (window.scrollY > window.innerHeight * 0.8) reveal();
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      window.clearTimeout(timer);
-      window.removeEventListener("scroll", onScroll);
-    };
+    const timer = window.setTimeout(reveal, 7000);
+    return () => window.clearTimeout(timer);
   }, [canPromote, mode]);
 
   if (!visible) return null;
