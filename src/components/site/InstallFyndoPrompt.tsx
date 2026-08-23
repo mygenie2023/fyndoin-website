@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { useInstallPrompt } from "@/hooks/use-pwa-install";
 import { Button } from "@/components/ui/cta";
 import { track } from "@/lib/fyndo";
 import { useI18n } from "@/i18n/provider";
+
 
 /**
  * Elegant, non-intrusive install nudge.
