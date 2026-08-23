@@ -65,37 +65,83 @@ export function Button({
   return <button className={buttonClass(variant, size, className)} {...rest} />;
 }
 
-/** The site's most important conversion: opening the FYNDO application. */
+/**
+ * The site's most important conversion.
+ * Shows "Install FYNDO" while the app is not installed and the browser offers
+ * an install path; otherwise it opens the FYNDO application.
+ */
 export function OpenAppButton({
   label,
+  installLabel,
   source,
   variant = "primary",
   size = "md",
   className,
 }: {
   label?: string;
+  installLabel?: string;
   source: string;
   variant?: Variant;
   size?: Size;
   className?: string;
 }) {
   const t = useT();
-  const text = label ?? t("common.cta.openApp");
+  const { tx } = useI18n();
+  const { mode, installed, install } = useInstallPrompt();
+  const [showIosSteps, setShowIosSteps] = useState(false);
+
+  const canInstall = !installed && (mode === "native" || mode === "ios-manual");
+  const text = canInstall
+    ? (installLabel ?? t("common.cta.installApp"))
+    : (label ?? t("common.cta.openApp"));
+
   const onClick = () => {
     track("open_app_clicked", { source });
     track("website_to_app_conversion", { source });
   };
 
+  const cls = buttonClass(variant, size, className);
+
+  if (canInstall) {
+    const onInstall = async () => {
+      if (mode === "ios-manual") {
+        setShowIosSteps((v) => !v);
+        track("install_prompt_shown", { source, mode });
+        return;
+      }
+      track("install_prompt_shown", { source, mode });
+      const outcome = await install();
+      if (outcome === "accepted") track("install_prompt_accepted", { source, mode });
+      else track("install_prompt_dismissed", { source, mode });
+    };
+
+    return (
+      <span className="relative inline-flex flex-col items-stretch">
+        <button type="button" onClick={onInstall} className={cls}>
+          {text}
+        </button>
+        {showIosSteps ? (
+          <ol className="mt-2 space-y-1 rounded-xl bg-secondary p-3 text-left text-sm text-muted-foreground">
+            {tx<readonly string[]>("common.install.iosSteps").map((step) => (
+              <li key={step}>{step}</li>
+            ))}
+          </ol>
+        ) : null}
+      </span>
+    );
+  }
+
   if (APP_IS_EXTERNAL) {
     return (
-      <a href={APP_URL} onClick={onClick} className={buttonClass(variant, size, className)}>
+      <a href={APP_URL} onClick={onClick} className={cls}>
         {text}
       </a>
     );
   }
   return (
-    <Link to="/app" onClick={onClick} className={buttonClass(variant, size, className)}>
+    <Link to="/app" onClick={onClick} className={cls}>
       {text}
     </Link>
+
   );
 }
