@@ -128,10 +128,6 @@ export function Navbar() {
               <PhoneIcon className="size-5" />
               {CONTACT.phone}
             </a>
-            <InstallAppButton
-              onDone={() => setOpen(false)}
-              className="rounded-xl px-3 py-3 text-left text-base font-semibold text-primary hover:bg-secondary"
-            />
 
           </nav>
         </div>
