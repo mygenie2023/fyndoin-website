@@ -90,7 +90,7 @@ export function OpenAppButton({
   const t = useT();
   const tx = useI18n().tx;
   const navigate = useNavigate();
-  const { mode, install } = useInstallPrompt();
+  const { mode, install, installed } = useInstallPrompt();
   const [showIosSteps, setShowIosSteps] = useState(false);
   const text = label ?? t("common.cta.openApp");
 
@@ -100,11 +100,18 @@ export function OpenAppButton({
   };
 
   const onClick = async (e: MouseEvent) => {
+    e.preventDefault();
     track("open_app_clicked", { source });
     track("website_to_app_conversion", { source });
 
+    // A standalone window is the only reliable browser signal that this
+    // installed PWA is already running. In that case, enter the app directly.
+    if (installed) {
+      launch();
+      return;
+    }
+
     if (mode === "native") {
-      e.preventDefault();
       track("install_prompt_shown", { mode, source });
       const outcome = await install();
       if (outcome === "accepted") {
@@ -117,31 +124,25 @@ export function OpenAppButton({
     }
 
     if (mode === "ios-manual") {
-      e.preventDefault();
       track("install_prompt_shown", { mode, source });
       setShowIosSteps(true);
+      return;
     }
+
+    // Never guess that an unavailable install event means the PWA is already
+    // installed. That event can arrive after hydration or be withheld by the
+    // browser. Most importantly, do not fall through to /app.
+    track("install_prompt_shown", { mode, source });
+    setShowIosSteps(true);
   };
 
   const cls = buttonClass(variant, size, className);
-  const needsInstall = mode === "native" || mode === "ios-manual";
 
   return (
     <>
-      {needsInstall ? (
-        // Installable devices: the click opens the install flow, never a navigation.
-        <button type="button" onClick={onClick} className={cls}>
-          {text}
-        </button>
-      ) : APP_IS_EXTERNAL ? (
-        <a href={APP_URL} onClick={onClick} className={cls}>
-          {text}
-        </a>
-      ) : (
-        <Link to="/app" onClick={onClick} className={cls}>
-          {text}
-        </Link>
-      )}
+      <button type="button" onClick={onClick} className={cls}>
+        {text}
+      </button>
 
 
       {showIosSteps ? (
@@ -166,16 +167,7 @@ export function OpenAppButton({
               ))}
             </ol>
             <div className="mt-4 flex gap-2">
-              <Button
-                className="flex-1"
-                onClick={() => {
-                  setShowIosSteps(false);
-                  launch();
-                }}
-              >
-                {t("common.cta.openApp")}
-              </Button>
-              <Button variant="ghost" onClick={() => setShowIosSteps(false)}>
+              <Button className="flex-1" onClick={() => setShowIosSteps(false)}>
                 {t("common.install.later")}
               </Button>
             </div>
