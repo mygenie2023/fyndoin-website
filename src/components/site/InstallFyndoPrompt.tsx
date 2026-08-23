@@ -45,10 +45,16 @@ export function InstallFyndoPrompt() {
       return;
     }
     const outcome = await install();
-    if (outcome === "accepted") track("install_prompt_accepted", { mode });
-    else track("install_prompt_dismissed", { mode });
+    if (outcome === "accepted") {
+      track("install_prompt_accepted", { mode });
+      setVisible(false);
+      navigate({ to: "/app" });
+      return;
+    }
+    track("install_prompt_dismissed", { mode });
     setVisible(false);
   };
+
 
   return (
     <div
