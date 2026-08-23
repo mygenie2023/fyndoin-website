@@ -124,10 +124,16 @@ export function OpenAppButton({
   };
 
   const cls = buttonClass(variant, size, className);
+  const needsInstall = mode === "native" || mode === "ios-manual";
 
   return (
     <>
-      {APP_IS_EXTERNAL ? (
+      {needsInstall ? (
+        // Installable devices: the click opens the install flow, never a navigation.
+        <button type="button" onClick={onClick} className={cls}>
+          {text}
+        </button>
+      ) : APP_IS_EXTERNAL ? (
         <a href={APP_URL} onClick={onClick} className={cls}>
           {text}
         </a>
@@ -136,6 +142,7 @@ export function OpenAppButton({
           {text}
         </Link>
       )}
+
 
       {showIosSteps ? (
         <div
@@ -179,3 +186,77 @@ export function OpenAppButton({
   );
 }
 
+
+/**
+ * Explicit "Install FYNDO" action. Triggers the browser PWA install flow
+ * (or iOS manual steps). It never navigates to /app on its own — the app is
+ * launched only after the installation is accepted.
+ */
+export function InstallAppButton({
+  className,
+  onDone,
+}: {
+  className?: string;
+  onDone?: () => void;
+}) {
+  const t = useT();
+  const tx = useI18n().tx;
+  const navigate = useNavigate();
+  const { mode, install } = useInstallPrompt();
+  const [showIosSteps, setShowIosSteps] = useState(false);
+
+  const launch = () => {
+    if (APP_IS_EXTERNAL) window.location.href = APP_URL;
+    else navigate({ to: "/app" });
+  };
+
+  const onClick = async () => {
+    track("install_prompt_shown", { mode, source: "install_button" });
+    if (mode === "ios-manual") {
+      setShowIosSteps(true);
+      return;
+    }
+    const outcome = await install();
+    if (outcome === "accepted") {
+      track("install_prompt_accepted", { mode, source: "install_button" });
+      onDone?.();
+      launch();
+    } else {
+      track("install_prompt_dismissed", { mode, source: "install_button" });
+    }
+  };
+
+  return (
+    <>
+      <button type="button" onClick={onClick} className={className}>
+        {t("common.nav.installOnPhone")}
+      </button>
+      {showIosSteps ? (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-[80] flex items-end justify-center bg-foreground/40 p-3 backdrop-blur-sm"
+          onClick={() => setShowIosSteps(false)}
+        >
+          <div
+            className="surface-card w-full max-w-lg p-4 shadow-[var(--shadow-lift)]"
+            onClick={(ev) => ev.stopPropagation()}
+          >
+            <h2 className="font-display text-base font-bold">{t("common.install.title")}</h2>
+            <p className="mt-1 text-sm text-muted-foreground">{t("common.install.body")}</p>
+            <ol className="mt-3 space-y-1.5 rounded-xl bg-secondary p-3 text-sm text-muted-foreground">
+              {tx<readonly string[]>("common.install.iosSteps").map((step) => (
+                <li key={step}>{step}</li>
+              ))}
+            </ol>
+            <div className="mt-4 flex gap-2">
+              <Button variant="ghost" className="flex-1" onClick={() => setShowIosSteps(false)}>
+                {t("common.install.later")}
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+    </>
+  );
+}
