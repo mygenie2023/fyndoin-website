@@ -124,10 +124,16 @@ export function OpenAppButton({
   };
 
   const cls = buttonClass(variant, size, className);
+  const needsInstall = mode === "native" || mode === "ios-manual";
 
   return (
     <>
-      {APP_IS_EXTERNAL ? (
+      {needsInstall ? (
+        // Installable devices: the click opens the install flow, never a navigation.
+        <button type="button" onClick={onClick} className={cls}>
+          {text}
+        </button>
+      ) : APP_IS_EXTERNAL ? (
         <a href={APP_URL} onClick={onClick} className={cls}>
           {text}
         </a>
@@ -136,6 +142,7 @@ export function OpenAppButton({
           {text}
         </Link>
       )}
+
 
       {showIosSteps ? (
         <div
