@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Logo } from "./Logo";
 import { LanguageSwitcher } from "./LanguageSwitcher";
-import { OpenAppButton, InstallAppButton } from "@/components/ui/cta";
+import { OpenAppButton } from "@/components/ui/cta";
 import { useT } from "@/i18n/provider";
 import { CONTACT } from "@/lib/fyndo";
 import { cn } from "@/lib/utils";
@@ -128,10 +128,6 @@ export function Navbar() {
               <PhoneIcon className="size-5" />
               {CONTACT.phone}
             </a>
-            <InstallAppButton
-              onDone={() => setOpen(false)}
-              className="rounded-xl px-3 py-3 text-left text-base font-semibold text-primary hover:bg-secondary"
-            />
 
           </nav>
         </div>

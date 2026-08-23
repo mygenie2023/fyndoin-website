@@ -5,19 +5,45 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 }
 
-const DISMISS_KEY = "fyndo.install.dismissed";
-
 export type InstallMode = "native" | "ios-manual" | "unavailable";
 
+/**
+ * `beforeinstallprompt` fires once per page load, long before most CTAs mount
+ * (and never again on client-side navigation). The deferred event is therefore
+ * kept in a module-level store with a global listener registered at import
+ * time, so every component — whenever it mounts — sees the same install state.
+ */
+let deferredEvent: BeforeInstallPromptEvent | null = null;
+let installed = false;
+const listeners = new Set<() => void>();
+
+function emit() {
+  listeners.forEach((fn) => fn());
+}
+
+if (typeof window !== "undefined") {
+  window.addEventListener("beforeinstallprompt", (e: Event) => {
+    e.preventDefault();
+    deferredEvent = e as BeforeInstallPromptEvent;
+    emit();
+  });
+  window.addEventListener("appinstalled", () => {
+    deferredEvent = null;
+    installed = true;
+    emit();
+  });
+}
+
 export function useInstallPrompt() {
-  const [deferred, setDeferred] = useState<BeforeInstallPromptEvent | null>(null);
+  const [, force] = useState(0);
   const [standalone, setStandalone] = useState(false);
   const [isIos, setIsIos] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [installed, setInstalled] = useState(false);
-  const [snoozed, setSnoozed] = useState(true);
 
   useEffect(() => {
+    const rerender = () => force((n) => n + 1);
+    listeners.add(rerender);
+
     const ua = window.navigator.userAgent;
     const iosLike = /iPad|iPhone|iPod/.test(ua) || (/Macintosh/.test(ua) && "ontouchend" in document);
     setIsIos(iosLike);
@@ -27,41 +53,26 @@ export function useInstallPrompt() {
         (window.navigator as Navigator & { standalone?: boolean }).standalone === true,
     );
 
-    // The prompt is shown on every page load until the app is actually
-    // installed — dismissals are intentionally not remembered.
-    setSnoozed(false);
-
-    const onPrompt = (e: Event) => {
-      e.preventDefault();
-      setDeferred(e as BeforeInstallPromptEvent);
-    };
-    const onInstalled = () => setInstalled(true);
-    window.addEventListener("beforeinstallprompt", onPrompt);
-    window.addEventListener("appinstalled", onInstalled);
     return () => {
-      window.removeEventListener("beforeinstallprompt", onPrompt);
-      window.removeEventListener("appinstalled", onInstalled);
+      listeners.delete(rerender);
     };
   }, []);
 
-  const mode: InstallMode = deferred ? "native" : isIos && !standalone ? "ios-manual" : "unavailable";
+  const mode: InstallMode = deferredEvent ? "native" : isIos && !standalone ? "ios-manual" : "unavailable";
 
   const install = useCallback(async (): Promise<"accepted" | "dismissed" | "unsupported"> => {
-    if (!deferred) return "unsupported";
-    await deferred.prompt();
-    const { outcome } = await deferred.userChoice;
-    setDeferred(null);
-    if (outcome === "accepted") setInstalled(true);
+    const evt = deferredEvent;
+    if (!evt) return "unsupported";
+    await evt.prompt();
+    const { outcome } = await evt.userChoice;
+    deferredEvent = null;
+    if (outcome === "accepted") installed = true;
+    emit();
     return outcome;
-  }, [deferred]);
+  }, []);
 
   const snooze = useCallback(() => {
-    setSnoozed(true);
-    try {
-      window.localStorage.setItem(DISMISS_KEY, String(Date.now()));
-    } catch {
-      /* ignore */
-    }
+    /* dismissals are intentionally not remembered across refreshes */
   }, []);
 
   return {
@@ -70,9 +81,9 @@ export function useInstallPrompt() {
     isIos,
     installed: installed || standalone,
     standalone,
-    snoozed,
+    snoozed: false,
     /** Eligible for the automatic bottom-sheet nudge. */
-    canPromote: isMobile && !standalone && !installed && !snoozed && mode !== "unavailable",
+    canPromote: isMobile && !standalone && !installed && mode !== "unavailable",
     install,
     snooze,
   } as const;
