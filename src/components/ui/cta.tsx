@@ -1,8 +1,11 @@
-import { Link } from "@tanstack/react-router";
-import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from "react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import type { AnchorHTMLAttributes, ButtonHTMLAttributes, MouseEvent, ReactNode } from "react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { APP_URL, APP_IS_EXTERNAL, track } from "@/lib/fyndo";
-import { useT } from "@/i18n/provider";
+import { useT, useI18n } from "@/i18n/provider";
+import { useInstallPrompt } from "@/hooks/use-pwa-install";
+
 
 type Variant = "primary" | "accent" | "outline" | "ghost" | "onInk";
 type Size = "sm" | "md" | "lg";
