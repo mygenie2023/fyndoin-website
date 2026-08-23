@@ -85,8 +85,6 @@ export function Navbar() {
           <OpenAppButton
             source="navbar_mobile"
             label={t("common.cta.openAppShort")}
-            installLabel={t("common.cta.installAppShort")}
-
             size="sm"
             className="sm:hidden"
           />
