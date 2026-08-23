@@ -1,8 +1,10 @@
 import { Link } from "@tanstack/react-router";
+import { useState } from "react";
 import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { APP_URL, APP_IS_EXTERNAL, track } from "@/lib/fyndo";
-import { useT } from "@/i18n/provider";
+import { useT, useI18n } from "@/i18n/provider";
+import { useInstallPrompt } from "@/hooks/use-pwa-install";
 
 type Variant = "primary" | "accent" | "outline" | "ghost" | "onInk";
 type Size = "sm" | "md" | "lg";
@@ -105,7 +107,7 @@ export function OpenAppButton({
   if (canInstall) {
     const onInstall = async () => {
       if (mode === "ios-manual") {
-        setShowIosSteps((v) => !v);
+        setShowIosSteps((v: boolean) => !v);
         track("install_prompt_shown", { source, mode });
         return;
       }
@@ -122,7 +124,7 @@ export function OpenAppButton({
         </button>
         {showIosSteps ? (
           <ol className="mt-2 space-y-1 rounded-xl bg-secondary p-3 text-left text-sm text-muted-foreground">
-            {tx<readonly string[]>("common.install.iosSteps").map((step) => (
+            {tx<readonly string[]>("common.install.iosSteps").map((step: string) => (
               <li key={step}>{step}</li>
             ))}
           </ol>
