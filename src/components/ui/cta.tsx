@@ -1,8 +1,11 @@
-import { Link } from "@tanstack/react-router";
-import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from "react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import type { AnchorHTMLAttributes, ButtonHTMLAttributes, MouseEvent, ReactNode } from "react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { APP_URL, APP_IS_EXTERNAL, track } from "@/lib/fyndo";
-import { useT } from "@/i18n/provider";
+import { useT, useI18n } from "@/i18n/provider";
+import { useInstallPrompt } from "@/hooks/use-pwa-install";
+
 
 type Variant = "primary" | "accent" | "outline" | "ghost" | "onInk";
 type Size = "sm" | "md" | "lg";
@@ -65,7 +68,12 @@ export function Button({
   return <button className={buttonClass(variant, size, className)} {...rest} />;
 }
 
-/** The site's most important conversion: opening the FYNDO application. */
+/**
+ * The site's most important conversion: opening the FYNDO application.
+ * If the app is not installed yet, the click first offers installation
+ * (native prompt, or manual steps on iOS). Once installed — or when the
+ * device cannot install — the click launches the app at /app.
+ */
 export function OpenAppButton({
   label,
   source,
@@ -80,22 +88,94 @@ export function OpenAppButton({
   className?: string;
 }) {
   const t = useT();
+  const tx = useI18n().tx;
+  const navigate = useNavigate();
+  const { mode, install } = useInstallPrompt();
+  const [showIosSteps, setShowIosSteps] = useState(false);
   const text = label ?? t("common.cta.openApp");
-  const onClick = () => {
-    track("open_app_clicked", { source });
-    track("website_to_app_conversion", { source });
+
+  const launch = () => {
+    if (APP_IS_EXTERNAL) window.location.href = APP_URL;
+    else navigate({ to: "/app" });
   };
 
-  if (APP_IS_EXTERNAL) {
-    return (
-      <a href={APP_URL} onClick={onClick} className={buttonClass(variant, size, className)}>
-        {text}
-      </a>
-    );
-  }
+  const onClick = async (e: MouseEvent) => {
+    track("open_app_clicked", { source });
+    track("website_to_app_conversion", { source });
+
+    if (mode === "native") {
+      e.preventDefault();
+      track("install_prompt_shown", { mode, source });
+      const outcome = await install();
+      if (outcome === "accepted") {
+        track("install_prompt_accepted", { mode, source });
+        launch();
+      } else {
+        track("install_prompt_dismissed", { mode, source });
+      }
+      return;
+    }
+
+    if (mode === "ios-manual") {
+      e.preventDefault();
+      track("install_prompt_shown", { mode, source });
+      setShowIosSteps(true);
+    }
+  };
+
+  const cls = buttonClass(variant, size, className);
+
   return (
-    <Link to="/app" onClick={onClick} className={buttonClass(variant, size, className)}>
-      {text}
-    </Link>
+    <>
+      {APP_IS_EXTERNAL ? (
+        <a href={APP_URL} onClick={onClick} className={cls}>
+          {text}
+        </a>
+      ) : (
+        <Link to="/app" onClick={onClick} className={cls}>
+          {text}
+        </Link>
+      )}
+
+      {showIosSteps ? (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="open-app-install-title"
+          className="fixed inset-0 z-[80] flex items-end justify-center bg-foreground/40 p-3 backdrop-blur-sm"
+          onClick={() => setShowIosSteps(false)}
+        >
+          <div
+            className="surface-card w-full max-w-lg p-4 shadow-[var(--shadow-lift)]"
+            onClick={(ev) => ev.stopPropagation()}
+          >
+            <h2 id="open-app-install-title" className="font-display text-base font-bold">
+              {t("common.install.title")}
+            </h2>
+            <p className="mt-1 text-sm text-muted-foreground">{t("common.install.body")}</p>
+            <ol className="mt-3 space-y-1.5 rounded-xl bg-secondary p-3 text-sm text-muted-foreground">
+              {tx<readonly string[]>("common.install.iosSteps").map((step) => (
+                <li key={step}>{step}</li>
+              ))}
+            </ol>
+            <div className="mt-4 flex gap-2">
+              <Button
+                className="flex-1"
+                onClick={() => {
+                  setShowIosSteps(false);
+                  launch();
+                }}
+              >
+                {t("common.cta.openApp")}
+              </Button>
+              <Button variant="ghost" onClick={() => setShowIosSteps(false)}>
+                {t("common.install.later")}
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+    </>
   );
 }
+
