@@ -32,6 +32,8 @@ const common = {
   cta: {
     openApp: "FYNDO ऐप खोलें",
     openAppShort: "ऐप खोलें",
+    installApp: "FYNDO इंस्टॉल करें",
+    installAppShort: "इंस्टॉल",
     joinFyndo: "FYNDO से जुड़ें",
     learnMore: "और जानें",
     exploreServices: "सेवाएँ देखें",
