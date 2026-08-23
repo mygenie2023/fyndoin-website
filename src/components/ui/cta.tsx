@@ -80,12 +80,15 @@ export function OpenAppButton({
   variant = "primary",
   size = "md",
   className,
+  plain = false,
 }: {
   label?: string;
   source: string;
   variant?: Variant;
   size?: Size;
   className?: string;
+  /** Render as a plain text link (footer/menu) instead of a pill button. */
+  plain?: boolean;
 }) {
   const t = useT();
   const tx = useI18n().tx;
@@ -123,7 +126,7 @@ export function OpenAppButton({
     }
   };
 
-  const cls = buttonClass(variant, size, className);
+  const cls = plain ? cn(className) : buttonClass(variant, size, className);
   const needsInstall = mode === "native" || mode === "ios-manual";
 
   return (

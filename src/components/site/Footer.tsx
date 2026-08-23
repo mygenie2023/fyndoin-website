@@ -2,12 +2,12 @@ import { Link } from "@tanstack/react-router";
 import { Logo } from "./Logo";
 import { CONTACT } from "@/lib/fyndo";
 import { useT } from "@/i18n/provider";
+import { OpenAppButton } from "@/components/ui/cta";
 
 const COLUMNS: Array<{ titleKey: string; links: Array<{ to: string; key: string }> }> = [
   {
     titleKey: "product",
     links: [
-      { to: "/app", key: "openApp" },
       { to: "/how-it-works", key: "howItWorks" },
       { to: "/services", key: "services" },
     ],
@@ -85,6 +85,16 @@ export function Footer() {
               {t(`common.footer.${col.titleKey}`)}
             </h2>
             <ul className="mt-4 space-y-2.5">
+              {col.titleKey === "product" ? (
+                <li>
+                  <OpenAppButton
+                    source="footer"
+                    plain
+                    label={t("common.footer.links.openApp")}
+                    className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                  />
+                </li>
+              ) : null}
               {col.links.map((l) => (
                 <li key={l.to}>
                   <Link
