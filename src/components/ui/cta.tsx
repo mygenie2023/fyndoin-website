@@ -99,7 +99,7 @@ export function OpenAppButton({
     else navigate({ to: "/app" });
   };
 
-  const onClick = async (e: React.MouseEvent) => {
+  const onClick = async (e: MouseEvent) => {
     track("open_app_clicked", { source });
     track("website_to_app_conversion", { source });
 
