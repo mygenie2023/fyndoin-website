@@ -14,6 +14,8 @@ import { useI18n } from "@/i18n/provider";
  */
 export function InstallFyndoPrompt() {
   const { t, tx } = useI18n();
+  const navigate = useNavigate();
+
   const { canPromote, mode, install, snooze } = useInstallPrompt();
   const [visible, setVisible] = useState(false);
   const [showIosSteps, setShowIosSteps] = useState(false);
