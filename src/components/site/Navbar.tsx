@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Logo } from "./Logo";
 import { LanguageSwitcher } from "./LanguageSwitcher";
-import { OpenAppButton } from "@/components/ui/cta";
+import { OpenAppButton, InstallAppButton } from "@/components/ui/cta";
 import { useT } from "@/i18n/provider";
 import { CONTACT } from "@/lib/fyndo";
 import { cn } from "@/lib/utils";
