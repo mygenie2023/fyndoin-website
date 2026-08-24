@@ -136,14 +136,17 @@ export function OpenAppButton({
         <button type="button" onClick={onClick} className={cls}>
           {text}
         </button>
-      ) : APP_IS_EXTERNAL ? (
-        <a href={APP_URL} onClick={onClick} className={cls}>
+      ) : (
+        <a
+          href="/app/"
+          onClick={(e) => {
+            e.preventDefault();
+            window.location.assign("/app/");
+          }}
+          className={cls}
+        >
           {text}
         </a>
-      ) : (
-        <Link to="/app" onClick={onClick} className={cls}>
-          {text}
-        </Link>
       )}
 
 
