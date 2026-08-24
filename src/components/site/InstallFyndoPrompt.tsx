@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { useInstallPrompt } from "@/hooks/use-pwa-install";
 import { Button } from "@/components/ui/cta";
 import { track } from "@/lib/fyndo";
@@ -13,6 +14,7 @@ import { useI18n } from "@/i18n/provider";
  */
 export function InstallFyndoPrompt() {
   const { t, tx } = useI18n();
+  const navigate = useNavigate();
 
   const { canPromote, mode, install, snooze } = useInstallPrompt();
   const [visible, setVisible] = useState(false);
@@ -50,10 +52,9 @@ export function InstallFyndoPrompt() {
     if (outcome === "accepted") {
       track("install_prompt_accepted", { mode });
       setVisible(false);
-      window.location.href = "/app";
+      navigate({ to: "/app" });
       return;
     }
-
     track("install_prompt_dismissed", { mode });
     setVisible(false);
   };

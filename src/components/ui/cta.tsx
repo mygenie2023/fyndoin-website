@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import type { AnchorHTMLAttributes, ButtonHTMLAttributes, MouseEvent, ReactNode } from "react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -92,16 +92,15 @@ export function OpenAppButton({
 }) {
   const t = useT();
   const tx = useI18n().tx;
-  
+  const navigate = useNavigate();
   const { mode, install } = useInstallPrompt();
   const [showIosSteps, setShowIosSteps] = useState(false);
   const text = label ?? t("common.cta.openApp");
 
-  // Always do a full document load so /app boots fresh, never a client transition.
   const launch = () => {
-    window.location.href = APP_IS_EXTERNAL ? APP_URL : "/app";
+    if (APP_IS_EXTERNAL) window.location.href = APP_URL;
+    else navigate({ to: "/app" });
   };
-
 
   const onClick = async (e: MouseEvent) => {
     track("open_app_clicked", { source });
@@ -137,12 +136,15 @@ export function OpenAppButton({
         <button type="button" onClick={onClick} className={cls}>
           {text}
         </button>
-      ) : (
-        <a href={APP_IS_EXTERNAL ? APP_URL : "/app"} onClick={onClick} className={cls}>
+      ) : APP_IS_EXTERNAL ? (
+        <a href={APP_URL} onClick={onClick} className={cls}>
           {text}
         </a>
+      ) : (
+        <Link to="/app" onClick={onClick} className={cls}>
+          {text}
+        </Link>
       )}
-
 
 
       {showIosSteps ? (
@@ -202,13 +204,14 @@ export function InstallAppButton({
 }) {
   const t = useT();
   const tx = useI18n().tx;
+  const navigate = useNavigate();
   const { mode, install } = useInstallPrompt();
   const [showIosSteps, setShowIosSteps] = useState(false);
 
   const launch = () => {
-    window.location.href = APP_IS_EXTERNAL ? APP_URL : "/app";
+    if (APP_IS_EXTERNAL) window.location.href = APP_URL;
+    else navigate({ to: "/app" });
   };
-
 
   const onClick = async () => {
     track("install_prompt_shown", { mode, source: "install_button" });
