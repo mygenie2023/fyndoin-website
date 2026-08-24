@@ -52,9 +52,10 @@ export function InstallFyndoPrompt() {
     if (outcome === "accepted") {
       track("install_prompt_accepted", { mode });
       setVisible(false);
-      navigate({ to: "/app" });
+      window.location.href = "/app";
       return;
     }
+
     track("install_prompt_dismissed", { mode });
     setVisible(false);
   };
