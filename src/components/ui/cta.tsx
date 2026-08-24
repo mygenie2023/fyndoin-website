@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import type { AnchorHTMLAttributes, ButtonHTMLAttributes, MouseEvent, ReactNode } from "react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -92,14 +92,13 @@ export function OpenAppButton({
 }) {
   const t = useT();
   const tx = useI18n().tx;
-  const navigate = useNavigate();
   const { mode, install } = useInstallPrompt();
   const [showIosSteps, setShowIosSteps] = useState(false);
   const text = label ?? t("common.cta.openApp");
 
   const launch = () => {
-    if (APP_IS_EXTERNAL) window.location.href = APP_URL;
-    else navigate({ to: "/app" });
+    if (APP_IS_EXTERNAL) window.location.assign(APP_URL);
+    else window.location.assign("/app/");
   };
 
   const onClick = async (e: MouseEvent) => {
@@ -136,14 +135,17 @@ export function OpenAppButton({
         <button type="button" onClick={onClick} className={cls}>
           {text}
         </button>
-      ) : APP_IS_EXTERNAL ? (
-        <a href={APP_URL} onClick={onClick} className={cls}>
+      ) : (
+        <a
+          href="/app/"
+          onClick={(e) => {
+            e.preventDefault();
+            window.location.assign("/app/");
+          }}
+          className={cls}
+        >
           {text}
         </a>
-      ) : (
-        <Link to="/app" onClick={onClick} className={cls}>
-          {text}
-        </Link>
       )}
 
 
@@ -204,13 +206,12 @@ export function InstallAppButton({
 }) {
   const t = useT();
   const tx = useI18n().tx;
-  const navigate = useNavigate();
   const { mode, install } = useInstallPrompt();
   const [showIosSteps, setShowIosSteps] = useState(false);
 
   const launch = () => {
-    if (APP_IS_EXTERNAL) window.location.href = APP_URL;
-    else navigate({ to: "/app" });
+    if (APP_IS_EXTERNAL) window.location.assign(APP_URL);
+    else window.location.assign("/app/");
   };
 
   const onClick = async () => {
