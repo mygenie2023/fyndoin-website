@@ -92,7 +92,6 @@ export function OpenAppButton({
 }) {
   const t = useT();
   const tx = useI18n().tx;
-  const navigate = useNavigate();
   const { mode, install } = useInstallPrompt();
   const [showIosSteps, setShowIosSteps] = useState(false);
   const text = label ?? t("common.cta.openApp");
