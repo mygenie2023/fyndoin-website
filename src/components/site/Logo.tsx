@@ -1,6 +1,5 @@
 import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
-import logoAsset from "@/assets/fyndo-logo.png.asset.json";
 import { useT } from "@/i18n/provider";
 
 /** Compact square FYNDO mark (the two-figure icon). */
@@ -19,6 +18,7 @@ export function LogoMark({ className }: { className?: string }) {
 
 export function Logo({ className }: { className?: string }) {
   const t = useT();
+
   return (
     <Link
       to="/"
@@ -26,7 +26,7 @@ export function Logo({ className }: { className?: string }) {
       aria-label={t("common.a11y.fyndoHome")}
     >
       <img
-        src={logoAsset.url}
+        src="/fyndo-logo.png"
         alt="FYNDO"
         width={1920}
         height={517}
