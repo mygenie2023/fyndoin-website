@@ -98,8 +98,8 @@ export function OpenAppButton({
   const text = label ?? t("common.cta.openApp");
 
   const launch = () => {
-    if (APP_IS_EXTERNAL) window.location.href = APP_URL;
-    else navigate({ to: "/app" });
+    if (APP_IS_EXTERNAL) window.location.assign(APP_URL);
+    else window.location.assign("/app/");
   };
 
   const onClick = async (e: MouseEvent) => {
