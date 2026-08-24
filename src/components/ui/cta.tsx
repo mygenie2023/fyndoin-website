@@ -98,7 +98,7 @@ export function OpenAppButton({
 
   const launch = () => {
     if (APP_IS_EXTERNAL) window.location.assign(APP_URL);
-    else window.location.assign("/app/");
+    else window.location.assign("/app");
   };
 
   const onClick = async (e: MouseEvent) => {
@@ -137,10 +137,10 @@ export function OpenAppButton({
         </button>
       ) : (
         <a
-          href="/app/"
+          href="/app"
           onClick={(e) => {
             e.preventDefault();
-            window.location.assign("/app/");
+            window.location.assign("/app");
           }}
           className={cls}
         >
@@ -211,7 +211,7 @@ export function InstallAppButton({
 
   const launch = () => {
     if (APP_IS_EXTERNAL) window.location.assign(APP_URL);
-    else window.location.assign("/app/");
+    else window.location.assign("/app");
   };
 
   const onClick = async () => {
