@@ -202,14 +202,13 @@ export function InstallAppButton({
 }) {
   const t = useT();
   const tx = useI18n().tx;
-  const navigate = useNavigate();
   const { mode, install } = useInstallPrompt();
   const [showIosSteps, setShowIosSteps] = useState(false);
 
   const launch = () => {
-    if (APP_IS_EXTERNAL) window.location.href = APP_URL;
-    else navigate({ to: "/app" });
+    window.location.href = APP_IS_EXTERNAL ? APP_URL : "/app";
   };
+
 
   const onClick = async () => {
     track("install_prompt_shown", { mode, source: "install_button" });
