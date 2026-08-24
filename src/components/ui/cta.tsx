@@ -97,10 +97,11 @@ export function OpenAppButton({
   const [showIosSteps, setShowIosSteps] = useState(false);
   const text = label ?? t("common.cta.openApp");
 
+  // Always do a full document load so /app boots fresh, never a client transition.
   const launch = () => {
-    if (APP_IS_EXTERNAL) window.location.href = APP_URL;
-    else navigate({ to: "/app" });
+    window.location.href = APP_IS_EXTERNAL ? APP_URL : "/app";
   };
+
 
   const onClick = async (e: MouseEvent) => {
     track("open_app_clicked", { source });
